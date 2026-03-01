@@ -31,14 +31,13 @@ type GalleryItem = {
 const categories = ["All", "Network", "Travel", "Life", "Work", "Certificate"];
 const skills = ["Trader & Investor", "Web Developer", "Video Editor", "Graphic Designer", "IoT Developer"];
 
-// --- TITANIUM ANIMATION VARIANTS (DEFINED HERE TO FIX RED LINES) ---
-// Dipindahkan ke atas agar bisa diakses oleh semua komponen
+// --- TITANIUM ANIMATION VARIANTS (SUDAH DIPERBAIKI DENGAN "as const") ---
 const titaniumTextVariant = {
     hidden: { opacity: 0, y: 30 },
     visible: { 
         opacity: 1, 
         y: 0,
-        transition: { duration: 1, ease: [0.22, 1, 0.36, 1] } // Apple-style ease
+        transition: { duration: 1, ease: [0.22, 1, 0.36, 1] as const } // <--- INI KUNCI BIAR VERCEL GAK ERROR
     }
 };
 
@@ -71,10 +70,6 @@ function ProximityScanner() {
         // vipList: 90-99% (HARUS PERSIS / EXACT MATCH)
         // Masukkan SEMUA variasi nama lengkap yang diinginkan di sini
         const vipList = [
-            "dede", 
-            "dede maulana", 
-            "dede maulana abdan", 
-            "dede maulana abdan syakur",
             "dwi rangga", "zaidan", "zaidan riziq", "zaidan riziq hibatulwafi", "fathen", "ayala", "fathen ayala", "fathen ayala delpiero", "fhariza", "fhariza paras", "paras", "fhariza paras alghifera", "ilman", "gogon", 
             "iqbal", "iqbal fadillah", "kiki", "paras", "rinneki", "sugih", "admin"
         ];
@@ -242,24 +237,10 @@ function ProximityScanner() {
 }
 
 export default function AboutPage() {
-  // --- 1. DEFINISI VARIANT (TARUH DISINI AGAR TERBACA/TIDAK MERAH) ---
-  const titaniumTextVariant = {
-      hidden: { opacity: 0, y: 30 },
-      visible: { 
-          opacity: 1, 
-          y: 0,
-          transition: { duration: 1, ease: [0.22, 1, 0.36, 1] } 
-      }
-  };
-
   const [photos, setPhotos] = useState<GalleryItem[]>([]);
   const [filteredPhotos, setFilteredPhotos] = useState<GalleryItem[]>([]);
   const [activeTab, setActiveTab] = useState("All");
   const [projectCount, setProjectCount] = useState<number | null>(null);
-
-  // --- 2. CEK DUPLIKAT KATEGORI (HAPUS JIKA ADA YANG GANDA) ---
-  // Pastikan list ini UNIK. Kalau ada "Life" dua kali, hapus satu.
-  const categories = ["All", "Network", "Travel", "Life", "Work", "Certificate"]; 
 
   useEffect(() => {
     async function fetchGallery() {
