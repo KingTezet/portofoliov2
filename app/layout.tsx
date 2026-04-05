@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Moch. Sugih Nugraha",
   description: "Trader & Multidisciplinary Creative",
   icons: {
@@ -25,8 +25,10 @@ export const metadata = {
       },
     ],
   },
+  verification: {
+    google: "RJW3mxA5Onz8896dm4HhwMRimpMwRkTQVevNdkmpHiY", // <--- TAMBAHKAN KODE INI
+  },
 };
-
 
 export default function RootLayout({
   children,
