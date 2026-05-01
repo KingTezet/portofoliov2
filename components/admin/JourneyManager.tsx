@@ -66,12 +66,12 @@ export default function JourneyManager() {
     return new Date(dateString).getFullYear();
   };
 
-  const getCategoryIcon = (cat: string) => {
-    if (cat === 'Trading') return <TrendingUp size={14}/>;
+    const getCategoryIcon = (cat: string) => {
+    if (cat === 'Product Management' || cat === 'Strategy') return <Briefcase size={14}/>;
     if (cat === 'Web Developer') return <Code size={14}/>;
-    if (cat === 'Editor Video') return <Video size={14}/>;
+    if (cat === 'Creative Direction') return <Palette size={14}/>;
     if (cat === 'IoT') return <Cpu size={14}/>;
-    if (cat === 'Graphic Design') return <Palette size={14}/>;
+    if (cat === 'AI Automation') return <TrendingUp size={14}/>; // Pakai ikon naik untuk AI
     if (cat === 'Education') return <GraduationCap size={14}/>;
     return <Briefcase size={14}/>;
   };
@@ -154,15 +154,16 @@ export default function JourneyManager() {
                     <div className="space-y-2">
                         <label className="text-xs font-medium text-gray-400 ml-1">Category</label>
                         <div className="relative">
-                            <select className="w-full bg-black/20 border border-white/10 p-3 rounded-2xl text-white font-medium outline-none focus:border-white/30 focus:bg-black/40 transition-all appearance-none cursor-pointer"
-                                value={formData.category || "Education"} onChange={e => setFormData({...formData, category: e.target.value})}>
-                                <option value="Education">Education</option>
-                                <option value="Trading">Trading</option>
-                                <option value="Editor Video">Editor Video</option>
-                                <option value="Web Developer">Web Developer</option>
-                                <option value="Graphic Design">Graphic Design</option>
-                                <option value="IoT">IoT</option>
-                            </select>
+                        <select className="w-full bg-black/20 border border-white/10 p-3 rounded-2xl text-white font-medium outline-none focus:border-white/30 focus:bg-black/40 transition-all appearance-none cursor-pointer"
+                            value={formData.category || "Education"} onChange={e => setFormData({...formData, category: e.target.value})}>
+                            <option value="Education">Education</option>
+                            <option value="Product Management">Product Management</option>
+                            <option value="Strategy">Strategy</option>
+                            <option value="AI Automation">AI Automation</option>
+                            <option value="Web Developer">Web Developer</option>
+                            <option value="Creative Direction">Creative Direction</option>
+                            <option value="IoT">IoT</option>
+                        </select>
                         </div>
                     </div>
                 </div>
