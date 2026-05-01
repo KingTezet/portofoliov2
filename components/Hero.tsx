@@ -214,7 +214,7 @@ export default function Hero() {
           Crafting seamless digital experiences and precision visuals.
           <br className="hidden md:block" />
           <span className="text-gray-200 font-normal mt-2 block">
-            Graphic Designer | Video Editor | Web Developer | Financial Trader
+            Technical Product Manager | AI Automation Specialist | Creative Technologist
           </span>
         </motion.p>
 
