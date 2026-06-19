@@ -1,6 +1,19 @@
 # Moch. Sugih Nugraha — Product Engineer & AI Automation Specialist
 
-[![Live Portfolio](https://img.shields.io/badge/Live_Demo-mochsugihnugraha.vercel.app-blue?style=for-the-badge)](https://mochsugihnugraha-v2.vercel.app/)
+<div align="left">
+  <img src="https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/TypeScript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
+  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/n8n-FF6C37?style=for-the-badge&logo=n8n&logoColor=white" alt="n8n" />
+  <img src="https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion" />
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
+</div>
+
+<br />
+
+[!["Live Portfolio"](https://img.shields.io/badge/Live_Portfolio-mochsugihnugraha--v2.vercel.app-white?style=for-the-badge&logo=vercel&logoColor=black&labelColor=lightgray)](https://moch-sugih-nugraha-v2.vercel.app/)
 
 ## 🚀 About This Project
 
