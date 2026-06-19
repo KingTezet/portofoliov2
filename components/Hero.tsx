@@ -211,10 +211,10 @@ export default function Hero() {
           transition={{ duration: 1, ease: "easeOut", delay: 0.4 }}
           className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-light"
         >
-          Crafting seamless digital experiences and precision visuals.
+          Building highly autonomous and reliable digital products.
           <br className="hidden md:block" />
           <span className="text-gray-200 font-normal mt-2 block">
-            Technical Product Manager | AI Automation Specialist | Creative Technologist
+            Product Engineer | Full-Stack (Next.js) | AI Automation Specialist
           </span>
         </motion.p>
 

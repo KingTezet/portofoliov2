@@ -13,7 +13,7 @@ type JourneyItem = {
 };
 
 // Kategori Filter
-const categories = ["Latest", "Education", "Product & Strategy", "Tech & AI", "Creative"];
+const categories = ["Latest", "Product Engineering", "AI & Automation", "Leadership", "Education"]
 
 export default function Journey() {
   const [journeys, setJourneys] = useState<JourneyItem[]>([]);
@@ -52,27 +52,12 @@ export default function Journey() {
     }
     
     return journeys.filter((item) => {
-       // Pastikan item.category tidak undefined
-       const dbCategory = item.category || "";
+  const dbCategory = item.category || "";
 
-       // 1. Tab Tech & AI menangkap data Web Dev, IoT, AI, dll.
-       if (activeTab === "Tech & AI") {
-         return ["Web Developer", "IoT", "AI Automation", "Tech"].includes(dbCategory);
-       }
-       
-       // 2. Tab Creative menangkap data Video, Grafis, dll.
-       if (activeTab === "Creative") {
-         return ["Editor Video", "Graphic Design", "Creative Direction"].includes(dbCategory);
-       }
-
-       // 3. Tab Product & Strategy menangkap peran manajerial
-       if (activeTab === "Product & Strategy") {
-         return ["Product Management", "Strategy", "Product & Strategy"].includes(dbCategory);
-       }
-
-       // 4. Fallback untuk tab lain (seperti Education) agar pencocokannya otomatis
-       return dbCategory.toLowerCase() === activeTab.toLowerCase();
-    });
+  // Karena kategori di database sekarang sudah persis sama dengan nama Tab,
+  // kita cukup melakukan pencocokan string secara langsung (case-insensitive)
+  return dbCategory.toLowerCase() === activeTab.toLowerCase();
+});
   };
 
   const allFiltered = getFilteredJourneys();

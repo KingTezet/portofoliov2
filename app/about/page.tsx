@@ -29,7 +29,14 @@ type GalleryItem = {
 };
 
 const categories = ["All", "Network", "Travel", "Life", "Work", "Certificate"];
-const skills = ["Trader & Investor", "Web Developer", "Video Editor", "Graphic Designer", "IoT Developer"];
+const skills = [
+  "Frontend Architecture",
+  "Backend & Cloud",
+  "AI & Automation",
+  "UI/UX Engineering",
+  "Full-Stack Development",
+  "Data Analytics"
+];
 
 // --- TITANIUM ANIMATION VARIANTS (SUDAH DIPERBAIKI DENGAN "as const") ---
 const titaniumTextVariant = {
@@ -328,9 +335,9 @@ export default function AboutPage() {
             </motion.div>
 
             <div className="text-gray-400 text-lg leading-relaxed space-y-6 font-light max-w-2xl">
-              <p>Halo everyone! Saya <strong className="text-white font-medium">Sugih Nugraha</strong>, seorang <strong className="text-white font-medium">Multidisciplinary Creative</strong> yang juga mendalami dunia <strong className="text-white font-medium">Trading</strong>. Saya bergerak di persimpangan antara logika pasar dan kreativitas digital.</p>
-              <p>Identitas saya dibangun dari disiplin yang beragam. Saya adalah seorang pembaca angka sebagai <strong className="text-white font-medium">Trader & Investor</strong>, arsitek baris kode sebagai <strong className="text-white font-medium">Web & IoT Developer</strong>, dan pencerita visual sebagai <strong className="text-white font-medium">Video Editor & Graphic Designer</strong>.</p>
-              <p>Saya percaya bahwa teknologi terbaik lahir dari kombinasi logika yang tajam dan kreativitas yang tak terbatas—sebuah standar yang saya bawa di setiap pekerjaan saya: <strong className="text-white font-medium">Titanium Grade Precision</strong>.</p>
+              <p>Hello! I am <strong className="text-white font-medium">Moch Sugih Nugraha</strong>, a <strong className="text-white font-medium">Product Engineer</strong> focusing on building end-to-end full-stack web applications.</p>
+                <p>I specialize in the <strong className="text-white font-medium">Next.js & Supabase</strong> ecosystem, and I am deeply passionate about leveraging <strong className="text-white font-medium">AI Automation (n8n & LLM)</strong> to slash business operational overhead.</p>
+                <p>I believe that the best code architecture is one that <strong className="text-white font-medium">measurably solves real-world business problems</strong>.</p>
             </div>
             
             <div>

@@ -256,12 +256,12 @@ export default function Footer() {
                     </span>
                 </h2>
                 <p className="text-gray-400 text-lg font-light">
-                    Open for freelance projects, trading discussions, or just a coffee chat.
+                    Open for high-impact engineering roles, product discussions, or just a coffee chat.
                 </p>
             </div>
             <div>
                 <a 
-                    href="https://mail.google.com/mail/?view=cm&fs=1&to=nugrahasugih18@gmail.com"
+                    href="https://mail.google.com/mail/?view=cm&fs=1&to=mochsugihnugraha@gmail.com"
                     target="_blank" 
                     className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white text-black font-bold text-lg hover:bg-gray-200 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.2)]"
                 >
@@ -282,7 +282,7 @@ export default function Footer() {
                 <a href="https://github.com/KingTezet" target="_blank" className="hover:text-white transition-colors"><Github size={20} /></a>
                 <a href="https://instagram.com/sugihnugrahaa" target="_blank" className="hover:text-white transition-colors"><Instagram size={20} /></a>
                 <a href="https://www.linkedin.com/in/moch-sugih-nugraha/" className="hover:text-white transition-colors"><Linkedin size={20} /></a>
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=nugrahasugih18@gmail.com" target="_blank" className="hover:text-white transition-colors"><Mail size={20} /></a>
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=mochsugihnugraha@gmail.com" target="_blank" className="hover:text-white transition-colors"><Mail size={20} /></a>
             </div>
         </div>
       </div>

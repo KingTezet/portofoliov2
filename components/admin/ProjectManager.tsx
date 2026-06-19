@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { Upload, Trash2, Plus, Save, X, Loader2, LayoutGrid, Edit3, Image as ImgIcon, Monitor, TrendingUp, Cpu, Video, Link as LinkIcon } from "lucide-react";
+import { Upload, Trash2, Plus, Save, X, Loader2, LayoutGrid, Edit3, Image as ImgIcon, Monitor, TrendingUp, Cpu, Video, Link as LinkIcon, Briefcase, Code } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 type Project = {
@@ -22,7 +22,7 @@ export default function ProjectManager() {
   const [isEditing, setIsEditing] = useState(false);
   
   const [formData, setFormData] = useState<Partial<Project>>({
-    title: "", category: "Web Dev", description: "", thumbnail_url: "", demo_url: ""
+    title: "", category: "Frontend", description: "", thumbnail_url: "", demo_url: ""
   });
   const [file, setFile] = useState<File | null>(null);
 
@@ -63,9 +63,7 @@ export default function ProjectManager() {
     const imageUrl = await handleUpload();
     if (!imageUrl && !formData.thumbnail_url) return alert("Wajib ada gambar visual!");
     
-    if (formData.category === "Video Editor" && !formData.demo_url) {
-        return alert("Untuk kategori Video Editor, Link Video wajib diisi!");
-    }
+    // Validasi link video telah dihapus karena kategori Video Editor sudah tidak ada
 
     const payload = { 
       title: formData.title,
@@ -84,7 +82,7 @@ export default function ProjectManager() {
       }
       
       setIsEditing(false); 
-      setFormData({ title: "", category: "Web Dev", description: "", thumbnail_url: "", demo_url: "" }); 
+      setFormData({ title: "", category: "Frontend", description: "", thumbnail_url: "", demo_url: "" }); 
       setFile(null); 
       fetchProjects();
 
@@ -99,11 +97,12 @@ export default function ProjectManager() {
     fetchProjects();
   };
 
+  // REVISI: Mengganti logika ikon agar sesuai dengan kategori Engineering yang baru
   const getCategoryIcon = (cat: string) => {
-    if (cat === 'Trading') return <TrendingUp size={14}/>;
-    if (cat === 'IoT') return <Cpu size={14}/>;
-    if (cat === 'Video Editor') return <Video size={14}/>;
-    return <Monitor size={14}/>;
+    if (cat === 'AI & Automation') return <TrendingUp size={14}/>;
+    if (cat === 'Full-Stack') return <Monitor size={14}/>;
+    if (cat === 'Frontend') return <Code size={14}/>;
+    return <Briefcase size={14}/>; // Fallback
   }
 
   return (
@@ -117,7 +116,7 @@ export default function ProjectManager() {
           </p>
         </div>
         <button 
-          onClick={() => { setIsEditing(true); setFormData({ category: "Web Dev" }); setFile(null); }}
+          onClick={() => { setIsEditing(true); setFormData({ category: "Frontend" }); setFile(null); }}
           className="bg-gradient-to-b from-gray-100 to-gray-300 text-black px-6 py-3 rounded-full font-medium text-xs shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2 active:scale-95"
         >
           <Plus size={16} strokeWidth={2.5} /> New Project
@@ -187,34 +186,34 @@ export default function ProjectManager() {
                   <div className="space-y-2">
                     <label className="text-xs font-medium text-gray-400 ml-1">Category</label>
                     <div className="relative">
+                      {/* REVISI: Opsi dropdown disesuaikan dengan 4 pilar Engineering */}
                       <select className="w-full bg-black/20 border border-white/10 rounded-2xl px-4 py-3 text-white text-sm focus:border-white/30 focus:bg-black/40 focus:outline-none appearance-none transition-all cursor-pointer"
-                        value={formData.category || "Web Dev"} onChange={e => setFormData({...formData, category: e.target.value})}>
-                        <option value="Trading">Trading</option>
-                        <option value="Web Developer">Web Developer</option>
-                        <option value="Video Editor">Video Editor</option>
-                        <option value="IoT">IoT</option>
-                        <option value="Graphic Design">Graphic Design</option>
+                        value={formData.category || "Frontend"} onChange={e => setFormData({...formData, category: e.target.value})}>
+                        <option value="Full-Stack">Full-Stack</option>
+                        <option value="AI & Automation">AI & Automation</option>
+                        <option value="Frontend">Frontend</option>
+                        <option value="Backend">Backend</option>
                       </select>
                       <LayoutGrid size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"/>
                     </div>
                   </div>
                 </div>
 
-                {formData.category === "Video Editor" && (
-                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-2 bg-blue-500/10 p-4 rounded-2xl border border-blue-500/20">
-                        <label className="text-xs font-bold text-blue-400 flex items-center gap-2">
-                            <Video size={14}/> Video Link (Required)
-                        </label>
-                        <input 
-                            type="url" 
-                            className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white text-sm font-mono focus:border-blue-500/50 focus:outline-none transition-all" 
-                            placeholder="https://instagram.com/reel/..." 
-                            value={formData.demo_url || ""} 
-                            onChange={e => setFormData({...formData, demo_url: e.target.value})} 
-                            required
-                        />
-                    </motion.div>
-                )}
+                {/* REVISI: Blok input URL untuk Video Editor dihapus karena sudah tidak relevan */}
+                
+                {/* TAMBAHAN: Input URL opsional untuk Live Demo / GitHub Repo */}
+                <div className="space-y-2">
+                    <label className="text-xs font-medium text-gray-400 ml-1 flex items-center gap-2">
+                        <LinkIcon size={14}/> Live Demo / GitHub URL (Optional)
+                    </label>
+                    <input 
+                        type="url" 
+                        className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-white/30 focus:bg-black/40 focus:outline-none transition-all" 
+                        placeholder="https://..." 
+                        value={formData.demo_url || ""} 
+                        onChange={e => setFormData({...formData, demo_url: e.target.value})} 
+                    />
+                </div>
 
                 <div className="space-y-2">
                   <label className="text-xs font-medium text-gray-400 ml-1">Description</label>

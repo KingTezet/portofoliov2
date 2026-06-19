@@ -19,7 +19,7 @@ type Project = {
   slug: string; 
 };
 
-const categories = ["All", "Trading", "Editor Video", "Web Developer", "Graphic Design", "IoT"];
+const categories = ["All", "Full-Stack", "AI & Automation", "Frontend", "UI/UX"];
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
