@@ -137,6 +137,7 @@ export const curatedProjects: ProjectEntry[] = [
       "An interactive WebXR platform for learning geometry through Indonesian cultural heritage — 360° tours of Borobudur and Prambanan.",
     tags: ["WebXR (A-Frame)", "Three.js", "Blender", "GLTF / GLB", "JavaScript", "HTML5"],
     thumbnail_url: "/images/projects/vr-geonusa.webp",
+    demo_url: "https://vr-geonusa.my.id",
     featured: true,
     caseStudy: {
       overview:
@@ -236,6 +237,7 @@ export const curatedProjects: ProjectEntry[] = [
       "A digital productivity workspace for daily habit tracking, weekly planning, and managing digital products.",
     tags: ["Next.js", "React", "TypeScript", "Supabase", "Tailwind CSS", "Meta Ads API"],
     thumbnail_url: "/images/projects/nata.webp",
+    demo_url: "https://nataspace.vercel.app",
     supporting: true,
     caseStudy: {
       overview: "A digital productivity workspace for habits, money, focus, and goals.",
