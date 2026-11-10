@@ -61,7 +61,7 @@ export default function Projects() {
               href={href}
               target={external ? "_blank" : undefined}
               rel={external ? "noopener noreferrer" : undefined}
-              className="group relative block aspect-[4/5] cursor-pointer overflow-hidden rounded-2xl bg-zinc-200"
+              className="group relative block aspect-[16/10] cursor-pointer overflow-hidden rounded-2xl bg-zinc-200"
             >
               <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-400">
                 <ImageOff size={24} className="mb-2" />

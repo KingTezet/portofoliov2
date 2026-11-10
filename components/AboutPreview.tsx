@@ -18,16 +18,18 @@ export default function AboutPreview() {
         <h2 className="font-sf-pro text-4xl font-medium tracking-tight text-zinc-900 md:text-5xl">About me.</h2>
       </div>
 
-      <div className="relative mb-8 aspect-video w-full overflow-hidden rounded-3xl bg-zinc-200 md:aspect-[21/9]">
+      <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-12 md:gap-12">
+      <div className="relative mx-auto aspect-[3/4] w-full max-w-md overflow-hidden rounded-3xl bg-zinc-200 md:col-span-5 md:max-w-none">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/profile-sugih.jpg"
           alt="Moch. Sugih Nugraha"
           loading="lazy"
-          className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
+          className="absolute inset-0 h-full w-full object-cover object-center"
         />
       </div>
 
+      <div className="md:col-span-7">
       <p className="font-sf-pro max-w-3xl text-2xl font-medium leading-snug tracking-tight text-zinc-500 md:text-3xl">
         Sugih is an Indonesia-based Product Engineer working across full-stack web, AI automation, and product
         thinking. He cares about the whole loop — from understanding the problem to shipping reliable software
@@ -52,6 +54,8 @@ export default function AboutPreview() {
         >
           Full profile <ArrowUpRight size={16} />
         </Link>
+      </div>
+      </div>
       </div>
     </section>
   );

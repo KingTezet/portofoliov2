@@ -89,7 +89,7 @@ export default function Footer() {
                   Let&apos;s Work Together <ArrowUpRight size={16} />
                 </a>
                 <a
-                  href="/cv-sugih.pdf"
+                  href="/CV_Moch_Sugih_Nugraha_Frontend_Engineer.pdf"
                   target="_blank"
                   download
                   className="inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-medium text-white transition-all hover:border-white/40 hover:bg-white/5"

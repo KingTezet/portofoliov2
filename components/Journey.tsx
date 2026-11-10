@@ -1,41 +1,72 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-
-type JourneyItem = {
-  id: number;
-  date_event: string;
-  title: string;
-  description: string;
-  category: string;
+type ExperienceItem = {
+  role: string;
+  org: string;
+  period: string;
+  points?: string[];
 };
 
-const INITIAL_COUNT = 6;
+// Source: public/CV_Moch_Sugih_Nugraha_Frontend_Engineer.pdf
+const experience: ExperienceItem[] = [
+  {
+    role: "Product Engineer & Growth Lead",
+    org: "Chogo Coffee · Contract, Remote",
+    period: "May 2026 — Present",
+    points: [
+      "Built the Next.js App Router interface and Supabase data layer for an operations platform that puts POS, online ordering, attendance, payroll, and loyalty in one system.",
+      "Launched a self-service ordering flow that processed 500+ transactions in its first month.",
+      "Replaced a multi-day manual payroll process with a one-click dashboard report.",
+      "Automated daily financial reconciliation with Supabase database triggers, cutting the end-of-day close from about 4 hours to under 30 minutes.",
+    ],
+  },
+  {
+    role: "Full-Stack & Automation Engineer",
+    org: "PT Ngulik Teknologi Digital",
+    period: "Mar 2026 — Present",
+    points: [
+      "Built Affligen, an LLM-powered tool that turns a product image into publish-ready marketing copy, cutting content preparation from about 15 minutes to under 1 minute per asset.",
+      "Wired Instagram publishing and a WhatsApp customer-service bot into n8n workflows; the bot handles about 70% of Tier-1 inquiries and cut typical response time from about 2 hours to under 3 seconds.",
+    ],
+  },
+  {
+    role: "Head & Mentor, UI/UX Division",
+    org: "Tahungoding",
+    period: "2024 — 2025",
+    points: [
+      "Shipped the organization's company-profile portal with Next.js and Supabase, reaching a 95+ Lighthouse performance score.",
+      "Consolidated three internal tools into one portal serving 100+ active SME members.",
+      "Documented technical decisions in asynchronous ADRs and coordinated a 15-person team in Linear, bringing sprint cycle time down from 14 to 10 days.",
+      "Created and taught a UI/UX engineering curriculum for 40+ university students; placed 1st (Best Mentor) among 11 instructors.",
+    ],
+  },
+  {
+    role: "Independent Web Developer",
+    org: "Freelance · Remote",
+    period: "2021 — 2024",
+    points: [
+      "Built and deployed landing pages and small-business websites for clients across West Java, handling requirements, implementation, and deployment from start to finish.",
+    ],
+  },
+  {
+    role: "Web Developer Intern",
+    org: "BBPPMPV Cimahi",
+    period: "Apr 2022 — Jun 2022",
+    points: [
+      "Developed a Laravel booking application to replace a paper-based guesthouse reservation process: 50+ reservations per week, 80% less processing time, and no double-booking errors reported.",
+    ],
+  },
+  {
+    role: "Universitas Sebelas April (UNSAP)",
+    org: "B.S. in Informatics · GPA 3.90/4.00",
+    period: "2023 — 2027 (expected)",
+  },
+  {
+    role: "SMKN 1 Sumedang",
+    org: "Software Engineering (RPL)",
+    period: "2020 — 2023",
+  },
+];
 
 export default function Journey() {
-  const [journeys, setJourneys] = useState<JourneyItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
-
-  useEffect(() => {
-    async function fetchJourneys() {
-      const { data, error } = await supabase
-        .from("journeys")
-        .select("*")
-        .order("date_event", { ascending: false });
-
-      if (error) console.error("Error fetching data:", error);
-      else setJourneys(data || []);
-      setLoading(false);
-    }
-    fetchJourneys();
-  }, []);
-
-  const displayed = journeys.slice(0, visibleCount);
-  const hasMore = visibleCount < journeys.length;
-  const canCollapse = !hasMore && visibleCount > INITIAL_COUNT;
-
   return (
     <section id="experience" className="mb-32 scroll-mt-24">
       <div className="mb-12">
@@ -43,56 +74,37 @@ export default function Journey() {
         <h2 className="font-sf-pro text-4xl font-medium tracking-tight text-zinc-900 md:text-5xl">Experience.</h2>
       </div>
 
-      {loading ? (
-        <p className="animate-pulse text-sm text-zinc-400">Loading history...</p>
-      ) : (
-        <div className="relative">
-          <div className="absolute bottom-0 left-[7px] top-2 w-px bg-zinc-200" />
-          <div className="space-y-0">
-            {displayed.map((item, i) => (
-              <div key={item.id} className="relative pb-12 pl-8 last:pb-0">
-                <div
-                  className={`absolute left-0 top-1.5 h-[15px] w-[15px] rounded-full border-2 ${
-                    i === 0 ? "border-zinc-900 bg-zinc-900" : "border-zinc-300 bg-[#fcfbfa]"
-                  }`}
-                />
-                <div className="mb-1 flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold text-zinc-900">{item.title}</h3>
-                    {item.category && <p className="text-sm text-zinc-500">{item.category}</p>}
-                  </div>
-                  <span className="shrink-0 text-sm text-zinc-400 sm:pt-0.5">{item.date_event}</span>
+      <div className="relative">
+        <div className="absolute bottom-0 left-[7px] top-2 w-px bg-zinc-200" />
+        <div className="space-y-0">
+          {experience.map((item, i) => (
+            <div key={item.role + item.period} className="relative pb-12 pl-8 last:pb-0">
+              <div
+                className={`absolute left-0 top-1.5 h-[15px] w-[15px] rounded-full border-2 ${
+                  i === 0 ? "border-zinc-900 bg-zinc-900" : "border-zinc-300 bg-[#fcfbfa]"
+                }`}
+              />
+              <div className="mb-1 flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-zinc-900">{item.role}</h3>
+                  <p className="text-sm text-zinc-500">{item.org}</p>
                 </div>
-                {item.description && (
-                  <ul className="mt-4 space-y-2">
-                    {item.description
-                      .split("\n")
-                      .map((line) => line.trim())
-                      .filter(Boolean)
-                      .map((line, idx) => (
-                        <li key={idx} className="flex gap-3 text-sm leading-relaxed text-zinc-600">
-                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-300" />
-                          {line.replace(/^[-•]\s*/, "")}
-                        </li>
-                      ))}
-                  </ul>
-                )}
+                <span className="shrink-0 text-sm text-zinc-400 sm:pt-0.5">{item.period}</span>
               </div>
-            ))}
-          </div>
+              {item.points && (
+                <ul className="mt-4 space-y-2">
+                  {item.points.map((p) => (
+                    <li key={p} className="flex gap-3 text-sm leading-relaxed text-zinc-600">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-300" />
+                      {p}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
         </div>
-      )}
-
-      {(hasMore || canCollapse) && (
-        <div className="mt-12">
-          <button
-            onClick={() => setVisibleCount(hasMore ? visibleCount + INITIAL_COUNT : INITIAL_COUNT)}
-            className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-5 py-2.5 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50"
-          >
-            {hasMore ? "Show more" : "Show less"}
-          </button>
-        </div>
-      )}
+      </div>
     </section>
   );
 }

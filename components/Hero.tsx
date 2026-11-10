@@ -94,7 +94,7 @@ export default function Hero() {
                 View Work <ArrowUpRight size={18} />
               </a>
               <a
-                href="/cv-sugih.pdf"
+                href="/CV_Moch_Sugih_Nugraha_Frontend_Engineer.pdf"
                 target="_blank"
                 download
                 className="flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-6 py-3 font-medium text-zinc-900 transition-colors hover:bg-zinc-50"
