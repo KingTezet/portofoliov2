@@ -1,10 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Lock } from "lucide-react";
 import { Reveal, SplitText, Tilt } from "@/components/motion";
 import ProjectCover, { useProjects } from "@/components/ProjectCover";
 import { impactHighlights } from "@/lib/projects";
+
+function PrivateLabel() {
+  return (
+    <span className="flex shrink-0 items-center gap-1 rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-0.5 text-[10px] font-medium text-zinc-500">
+      <Lock size={11} /> Private
+    </span>
+  );
+}
 
 export default function Projects() {
   const { projects } = useProjects();
@@ -49,7 +57,10 @@ export default function Projects() {
                     </span>
                   </div>
                   <div className="flex flex-grow flex-col p-6 sm:p-7">
-                    <span className="mb-2 font-mono text-[11px] uppercase tracking-wider text-zinc-500">{project.category}</span>
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <span className="font-mono text-[11px] uppercase tracking-wider text-zinc-500">{project.category}</span>
+                      {project.private && !project.demo_url && <PrivateLabel />}
+                    </div>
                     <h3 className="font-sf-pro mb-3 text-2xl font-medium tracking-tight text-zinc-900">{project.title}</h3>
                     <p className="mb-6 text-sm leading-6 text-zinc-600">{project.summary}</p>
                     <div className="mt-auto flex flex-wrap gap-2">
@@ -87,7 +98,10 @@ export default function Projects() {
                       <ProjectCover project={project} imgClassName="transition-transform duration-700 group-hover:scale-105" />
                     </div>
                     <div className="flex flex-grow flex-col p-5">
-                      <span className="mb-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500">{project.category}</span>
+                      <div className="mb-1 flex items-center justify-between gap-3">
+                        <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">{project.category}</span>
+                        {project.private && !project.demo_url && <PrivateLabel />}
+                      </div>
                       <h4 className="font-sf-pro flex items-start justify-between gap-2 text-lg font-medium tracking-tight text-zinc-900">
                         {project.title.split(" — ")[0]}
                         <ArrowUpRight size={16} className="mt-1 shrink-0 text-zinc-400 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-zinc-900" />
