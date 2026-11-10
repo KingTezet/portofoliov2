@@ -164,7 +164,7 @@ export const curatedProjects: ProjectEntry[] = [
       "An all-in-one F&B operations platform for POS, attendance, payroll, and loyalty. Processed 500+ transactions in its first month.",
     tags: ["Next.js (App Router)", "React", "TypeScript", "Supabase (PostgreSQL)", "Tailwind CSS", "Vercel"],
     thumbnail_url: "/images/projects/chogo.webp",
-    demo_url: "https://www.chogocoffee.com",
+    demo_url: "https://chogocoffee.com",
     supporting: true,
     caseStudy: {
       overview: "An all-in-one operations platform covering POS, attendance, payroll, and loyalty.",
