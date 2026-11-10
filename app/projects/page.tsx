@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowUpRight, ExternalLink, Github, Search } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, ExternalLink, Github, Lock, Search } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Reveal, SplitText, Tilt } from "@/components/motion";
 import ProjectCover, { useProjects } from "@/components/ProjectCover";
@@ -117,6 +117,11 @@ export default function ProjectsPage() {
                               <a href={project.repo_url} target="_blank" rel="noopener noreferrer" aria-label="Source code" className="text-zinc-400 transition-colors hover:text-zinc-900">
                                 <Github size={18} />
                               </a>
+                            )}
+                            {project.private && !project.demo_url && (
+                              <span title="Private project" aria-label="Private project" className="flex items-center gap-1 text-[11px] font-medium text-zinc-400">
+                                <Lock size={14} /> Private
+                              </span>
                             )}
                             {project.demo_url && (
                               <a href={project.demo_url} target="_blank" rel="noopener noreferrer" aria-label="Live demo" className="text-zinc-400 transition-colors hover:text-zinc-900">

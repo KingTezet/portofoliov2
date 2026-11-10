@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowLeft, ArrowUpRight, CheckCircle2, Code2, ExternalLink, Github, Layers, Target, TrendingUp, User, Wrench } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, CheckCircle2, Code2, ExternalLink, Github, Layers, Lock, Target, TrendingUp, User, Wrench } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Reveal, SplitText } from "@/components/motion";
 import ProjectCover, { useProjects } from "@/components/ProjectCover";
@@ -109,6 +109,11 @@ export default function ProjectDetail() {
 
           <Reveal delay={0.1}>
             <div className="mb-12 flex flex-wrap gap-3">
+              {project.private && !project.demo_url && (
+                <span className="flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-5 py-3 text-sm font-medium text-zinc-600">
+                  <Lock size={15} /> Private project · No public demo
+                </span>
+              )}
               {project.demo_url && (
                 <a href={project.demo_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:scale-[1.03] hover:bg-zinc-800">
                   <ExternalLink size={16} /> Visit Live Site

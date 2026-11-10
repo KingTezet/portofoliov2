@@ -26,6 +26,8 @@ export type ProjectEntry = {
   featured?: boolean;
   /** Shown in homepage More Work (array order). */
   supporting?: boolean;
+  /** Private/internal work: no public demo, shows a "Private project" label. */
+  private?: boolean;
   services?: string;
   productType?: string;
   caseStudy?: CaseStudy;
@@ -88,6 +90,7 @@ export const curatedProjects: ProjectEntry[] = [
     tags: ["Laravel", "PHP", "JavaScript", "OpenLayers / Leaflet", "PostgreSQL / MySQL", "Tailwind CSS"],
     thumbnail_url: "/images/projects/siperta.webp",
     featured: true,
+    private: true,
     caseStudy: {
       overview: "A land information system (Sistem Informasi Pertanahan) for the Government of West Bandung Regency.",
       challenge: "Staff needed to load and view spatial asset data in the browser and find records held by several local agencies (OPD).",
@@ -113,6 +116,7 @@ export const curatedProjects: ProjectEntry[] = [
     tags: ["Laravel", "PHP", "JavaScript", "MySQL", "Bootstrap / Tailwind CSS"],
     thumbnail_url: "/images/projects/arsis.webp",
     featured: true,
+    private: true,
     caseStudy: {
       overview: "A construction project management platform for PT Adipati Rekayasa Sistem.",
       challenge: "Project progress was recapped manually in Excel.",
@@ -218,6 +222,7 @@ export const curatedProjects: ProjectEntry[] = [
     tags: ["Next.js", "React", "TypeScript", "Canvas API / Phaser", "Socket.io", "Tailwind CSS"],
     thumbnail_url: "/images/projects/nata-virtual-office.webp",
     supporting: true,
+    private: true,
     caseStudy: {
       overview:
         "A 2D virtual office workspace where multiple AI agents work in department rooms, with a luxury beach-villa aesthetic.",
@@ -258,6 +263,7 @@ export const curatedProjects: ProjectEntry[] = [
     tags: ["Next.js (App Router)", "React", "TypeScript", "Tailwind CSS", "Vercel"],
     thumbnail_url: "/images/projects/frontend-learning.webp",
     supporting: true,
+    private: true,
     caseStudy: {
       overview: "A learning workspace for a 90-day Frontend Engineer roadmap.",
       role: "Designed and built the product.",
