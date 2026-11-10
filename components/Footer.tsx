@@ -1,291 +1,135 @@
-"use client";
+import Link from "next/link";
+import { ArrowUpRight, Github, Instagram, Linkedin, Mail, MapPin, MessageCircle } from "lucide-react";
 
-import { useEffect, useRef } from "react";
-import { Github, Instagram, Linkedin, Mail, ArrowUpRight } from "lucide-react";
+const EMAIL = "mochsugihnugraha@gmail.com";
+const WA = "https://wa.me/6285926270826";
+
+const socials = [
+  { label: "GitHub", href: "https://github.com/KingTezet", icon: Github },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/moch-sugih-nugraha/", icon: Linkedin },
+  { label: "Instagram", href: "https://instagram.com/sugihnugrahaa", icon: Instagram },
+];
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const footerRef = useRef<HTMLElement>(null);
-
-  // --- MAINAN: HIGH FIDELITY 3D GLASS ORBS ---
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const footer = footerRef.current;
-    if (!canvas || !footer) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let width = window.innerWidth;
-    let height = footer.offsetHeight;
-    canvas.width = width;
-    canvas.height = height;
-
-    let bubbles: Bubble[] = [];
-    let particles: Particle[] = [];
-
-    // --- CLASS BUBBLE (BOLA KACA REALISTIS) ---
-    class Bubble {
-      x: number;
-      y: number;
-      radius: number;
-      speedY: number;
-      wobble: number;
-      wobbleSpeed: number;
-
-      constructor() {
-        this.radius = Math.random() * 35 + 25; // Ukuran besar (25-60px) biar detail kaca kelihatan
-        this.x = Math.random() * width;
-        this.y = height + this.radius + Math.random() * 100;
-        this.speedY = Math.random() * 0.8 + 0.2; // Gerak pelan & berat (seperti kaca)
-        this.wobble = Math.random() * Math.PI * 2;
-        this.wobbleSpeed = Math.random() * 0.02;
-      }
-
-      update() {
-        this.y -= this.speedY;
-        this.x += Math.sin(this.wobble) * 0.3; // Goyang dikit banget
-        this.wobble += this.wobbleSpeed;
-
-        if (this.y + this.radius * 2 < 0) {
-            this.y = height + this.radius + Math.random() * 200;
-            this.x = Math.random() * width;
-        }
-      }
-
-      draw() {
-        if (!ctx) return;
-        ctx.save();
-
-        // 1. BADAN BOLA (Shadow Dasar)
-        // Kita tidak isi full warna. Kita biarkan transparan biar background web masuk.
-        // Tapi kita kasih bayangan hitam halus di pinggir dalam biar kelihatan 'berisi'.
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        
-        const bodyGrad = ctx.createRadialGradient(
-            this.x - this.radius * 0.3, this.y - this.radius * 0.3, this.radius * 0.1,
-            this.x, this.y, this.radius
-        );
-        bodyGrad.addColorStop(0, "rgba(0,0,0,0.1)"); // Tengah bening
-        bodyGrad.addColorStop(1, "rgba(0,0,0,0.8)"); // Pinggir gelap (biar kontras sama rim light)
-        
-        ctx.fillStyle = bodyGrad;
-        ctx.fill();
-
-        // 2. RIM LIGHT (Cahaya Pinggir Bawah) - Ini bikin efek 3D
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius * 0.95, 0, Math.PI * 2);
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.1)"; // Outline tipis
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        // Highlight Bawah (Pantulan Lantai)
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius * 0.85, 0.2 * Math.PI, 0.8 * Math.PI);
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.15)"; // Putih redup
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        // 3. SPECULAR HIGHLIGHT (KILATAN UTAMA) - "THE GLINT"
-        // Ini yang bikin kelihatan basah/kaca. Bentuk oval miring di kiri atas.
-        
-        ctx.shadowColor = "rgba(255, 255, 255, 0.8)";
-        ctx.shadowBlur = 15; // Glow effect pada kilatan
-
-        ctx.beginPath();
-        ctx.ellipse(
-            this.x - this.radius * 0.35, 
-            this.y - this.radius * 0.35, 
-            this.radius * 0.25, 
-            this.radius * 0.15, 
-            Math.PI / 4, 
-            0, Math.PI * 2
-        );
-        ctx.fillStyle = "rgba(255, 255, 255, 0.9)"; // Putih Solid Terang
-        ctx.fill();
-
-        // Highlight kecil kedua (Double reflection biar makin real)
-        ctx.beginPath();
-        ctx.arc(
-            this.x - this.radius * 0.1, 
-            this.y - this.radius * 0.5, 
-            this.radius * 0.05, 
-            0, Math.PI * 2
-        );
-        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-        ctx.fill();
-
-        ctx.restore();
-      }
-    }
-
-    // --- CLASS PARTICLE (PECAHAN KACA) ---
-    class Particle {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      size: number;
-      life: number;
-
-      constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 5 + 2; // Pecah lebih cepat
-        this.vx = Math.cos(angle) * speed;
-        this.vy = Math.sin(angle) * speed;
-        this.size = Math.random() * 2 + 1;
-        this.life = 1.0;
-      }
-
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        this.vy += 0.15; // Berat, jatuh ke bawah
-        this.life -= 0.04;
-      }
-
-      draw() {
-        if (!ctx) return;
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.life})`;
-        ctx.shadowBlur = 5;
-        ctx.shadowColor = "white";
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
-    }
-
-    // INIT
-    function init() {
-        bubbles = [];
-        const bubbleCount = 10; // CUMA 10 BIAR EKSKLUSIF
-        for (let i = 0; i < bubbleCount; i++) {
-            bubbles.push(new Bubble());
-        }
-    }
-
-    function animate() {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, width, height);
-
-      bubbles.forEach(b => { b.update(); b.draw(); });
-      
-      for (let i = 0; i < particles.length; i++) {
-        particles[i].update();
-        particles[i].draw();
-        if (particles[i].life <= 0) {
-            particles.splice(i, 1);
-            i--;
-        }
-      }
-      requestAnimationFrame(animate);
-    }
-
-    init();
-    animate();
-
-    // HANDLERS
-    const handleResize = () => {
-        if (!footer) return;
-        width = window.innerWidth;
-        height = footer.offsetHeight;
-        canvas.width = width;
-        canvas.height = height;
-        init();
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-
-        for (let i = 0; i < bubbles.length; i++) {
-            const b = bubbles[i];
-            const dist = Math.hypot(mouseX - b.x, mouseY - b.y);
-
-            // Hitbox
-            if (dist < b.radius + 15) { 
-                // DUAR!
-                for (let j = 0; j < 10; j++) {
-                    particles.push(new Particle(b.x, b.y));
-                }
-                // Respawn
-                b.y = height + b.radius + Math.random() * 300;
-                b.x = Math.random() * width;
-                b.radius = Math.random() * 35 + 25;
-            }
-        }
-    };
-
-    window.addEventListener("resize", handleResize);
-    footer.addEventListener("mousemove", handleMouseMove as any);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      footer.removeEventListener("mousemove", handleMouseMove as any);
-    };
-
-  }, []);
+  const year = new Date().getFullYear();
 
   return (
-    <footer ref={footerRef} className="relative bg-[#050505] text-white overflow-hidden border-t border-white/10 group">
-      
-      {/* === CANVAS 3D BLACK GLASS ORBS === */}
-      <canvas 
-        ref={canvasRef} 
-        className="absolute inset-0 w-full h-full z-0 cursor-crosshair"
-      />
+    <>
+      <section className="flex min-h-[80vh] flex-col items-center justify-center bg-[#fcfbfa] px-4 text-center">
+        <h2 className="font-sf-pro mb-10 pb-2 text-5xl font-semibold leading-none tracking-tighter text-zinc-900 sm:text-6xl md:text-7xl lg:text-8xl">
+          Let&apos;s{" "}
+          <span className="bg-gradient-to-b from-zinc-900 to-zinc-400 bg-clip-text pr-2 text-transparent">build something</span>
+          <br />
+          that lasts
+        </h2>
+        <p className="mb-8 max-w-2xl text-base leading-7 text-zinc-600 sm:text-lg sm:leading-8">
+          Open for high-impact engineering roles, product collaborations, AI automation projects, or just a coffee
+          chat. Reach out directly.
+        </p>
+        <a
+          href={`mailto:${EMAIL}`}
+          className="inline-flex items-center gap-3 rounded-full bg-zinc-900 px-7 py-4 text-base font-medium text-white transition-colors hover:bg-zinc-800"
+        >
+          {EMAIL}
+          <ArrowUpRight size={18} />
+        </a>
+        <a
+          href={WA}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-flex items-center gap-2 rounded-full border border-zinc-300 px-6 py-3 text-sm font-medium text-zinc-700 transition-colors hover:border-zinc-400 hover:text-zinc-900"
+        >
+          <MessageCircle size={16} />
+          Chat on WhatsApp
+        </a>
+      </section>
 
-      {/* Accent Background (Sangat Redup & Gelap) */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-900/5 rounded-full blur-[150px] pointer-events-none z-0" />
-      
-      {/* CONTENT (Pointer events auto biar tombol bisa diklik) */}
-      <div className="max-w-7xl mx-auto px-6 py-20 relative z-10 pointer-events-none"> 
-        
-        {/* TOP SECTION */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 mb-20 pointer-events-auto"> 
-            <div className="max-w-2xl">
-                <h2 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight mb-6">
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-200 via-white to-gray-400">
-                        Let's create something extraordinary.
-                    </span>
-                </h2>
-                <p className="text-gray-400 text-lg font-light">
-                    Open for high-impact engineering roles, product discussions, or just a coffee chat.
-                </p>
-            </div>
-            <div>
-                <a 
-                    href="https://mail.google.com/mail/?view=cm&fs=1&to=mochsugihnugraha@gmail.com"
-                    target="_blank" 
-                    className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white text-black font-bold text-lg hover:bg-gray-200 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+      <footer className="bg-zinc-900 text-white">
+        <div className="mx-auto max-w-7xl px-8 pb-10 pt-16 sm:px-12 lg:px-16">
+          <div className="mb-16 grid grid-cols-1 gap-16 lg:grid-cols-12">
+            <div className="flex flex-col items-start lg:col-span-5">
+              <h3 className="mb-4 text-4xl font-medium">Moch. Sugih Nugraha</h3>
+              <p className="mb-8 max-w-sm text-sm text-zinc-400">
+                Product Engineer building highly autonomous and reliable digital products.
+              </p>
+              <div className="mb-8 w-full space-y-4 text-sm text-zinc-300">
+                <div className="flex items-center gap-4">
+                  <MapPin size={18} />
+                  <span>Indonesia • Available Worldwide</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Mail size={18} />
+                  <a href={`mailto:${EMAIL}`} className="transition-colors hover:text-white">
+                    {EMAIL}
+                  </a>
+                </div>
+              </div>
+              <div className="mb-8">
+                <p className="mb-4 text-sm font-medium text-zinc-400">Follow me</p>
+                <div className="flex gap-5">
+                  {socials.map(({ label, href, icon: Icon }) => (
+                    <a
+                      key={label}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      className="text-zinc-400 transition-colors hover:text-white"
+                    >
+                      <Icon size={22} />
+                    </a>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href={`mailto:${EMAIL}`}
+                  className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-zinc-900 transition-all hover:bg-zinc-100"
                 >
-                    Get in Touch
-                    <ArrowUpRight className="group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform" />
+                  Let&apos;s Work Together <ArrowUpRight size={16} />
                 </a>
+                <a
+                  href="/cv-sugih.pdf"
+                  target="_blank"
+                  download
+                  className="inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-medium text-white transition-all hover:border-white/40 hover:bg-white/5"
+                >
+                  Download CV
+                </a>
+              </div>
             </div>
-        </div>
 
-        <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent mb-10" />
+            <div className="hidden lg:col-span-1 lg:block" />
 
-        {/* BOTTOM SECTION */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-gray-500 pointer-events-auto">
-            <div className="font-mono">
-                © {currentYear} Moch. Sugih Nugraha. All rights reserved.
+            <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:col-span-6">
+              <div>
+                <h4 className="mb-8 text-lg font-medium">Services</h4>
+                <ul className="space-y-4 text-sm text-zinc-400">
+                  <li>Full-Stack Development</li>
+                  <li>AI Automation</li>
+                  <li>Product Engineering</li>
+                  <li>UI/UX Engineering</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="mb-8 text-lg font-medium">Quick Links</h4>
+                <ul className="space-y-4 text-sm text-zinc-400">
+                  <li><Link href="/#portfolio" className="transition-colors hover:text-white">Portfolio</Link></li>
+                  <li><Link href="/#experience" className="transition-colors hover:text-white">Experience</Link></li>
+                  <li><Link href="/projects" className="transition-colors hover:text-white">Projects</Link></li>
+                  <li><Link href="/about" className="transition-colors hover:text-white">About</Link></li>
+                  <li><a href={WA} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-white">Contact</a></li>
+                </ul>
+              </div>
             </div>
-            <div className="flex items-center gap-6">
-                <a href="https://github.com/KingTezet" target="_blank" className="hover:text-white transition-colors"><Github size={20} /></a>
-                <a href="https://instagram.com/sugihnugrahaa" target="_blank" className="hover:text-white transition-colors"><Instagram size={20} /></a>
-                <a href="https://www.linkedin.com/in/moch-sugih-nugraha/" className="hover:text-white transition-colors"><Linkedin size={20} /></a>
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=mochsugihnugraha@gmail.com" target="_blank" className="hover:text-white transition-colors"><Mail size={20} /></a>
-            </div>
+          </div>
+
+          <div className="flex flex-col items-center justify-between gap-4 border-t border-zinc-800 pt-8 text-xs text-zinc-500 md:flex-row">
+            <p>© {year} Moch. Sugih Nugraha. All rights reserved.</p>
+            <p>Built with Next.js</p>
+          </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+    </>
   );
 }

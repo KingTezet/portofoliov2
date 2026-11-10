@@ -1,247 +1,131 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
-import Link from "next/link";
+import { ArrowUpRight, Github, Instagram, Linkedin, Mail, MapPin, MessageCircle } from "lucide-react";
+
+const socials = [
+  { label: "GitHub", href: "https://github.com/KingTezet", icon: Github },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/moch-sugih-nugraha/", icon: Linkedin },
+  { label: "Instagram", href: "https://instagram.com/sugihnugrahaa", icon: Instagram },
+  { label: "Email", href: "mailto:mochsugihnugraha@gmail.com", icon: Mail },
+];
+
+const stack = ["Next.js", "React", "TypeScript", "Supabase", "Node.js", "AI Automation"];
 
 export default function Hero() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
-
-    let particles: Particle[] = [];
-
-    // Mouse Position
-    const mouse = { x: undefined as number | undefined, y: undefined as number | undefined };
-    const connectionDistance = 100; // Jarak maksimal untuk bikin garis
-
-    class Particle {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      size: number;
-
-      constructor() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 0.5; // Kecepatan lambat
-        this.vy = (Math.random() - 0.5) * 0.5;
-        this.size = Math.random() * 1.5 + 1;
-      }
-
-      update() {
-        // Gerak bebas
-        this.x += this.vx;
-        this.y += this.vy;
-
-        // Bounce pinggir layar
-        if (this.x < 0 || this.x > width) this.vx = -this.vx;
-        if (this.y < 0 || this.y > height) this.vy = -this.vy;
-
-        // Mouse Attraction (Magnet)
-        if (mouse.x !== undefined && mouse.y !== undefined) {
-            const dx = mouse.x - this.x;
-            const dy = mouse.y - this.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            
-            // Kalau dekat mouse, tarik pelan-pelan
-            if (distance < 200) {
-                this.x += dx * 0.02;
-                this.y += dy * 0.02;
-            }
-        }
-      }
-
-      draw() {
-        if (!ctx) return;
-        ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    function init() {
-      particles = [];
-      // Jumlah partikel (jangan kebanyakan biar ga berat)
-      const particleCount = (width * height) / 9000;
-      for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-      }
-    }
-
-    function animate() {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, width, height);
-
-      for (let i = 0; i < particles.length; i++) {
-        particles[i].update();
-        particles[i].draw();
-
-        // LOGIC KONEKSI GARIS (NETWORK)
-        // Cek jarak ke partikel lain
-        for (let j = i; j < particles.length; j++) {
-            const dx = particles[i].x - particles[j].x;
-            const dy = particles[i].y - particles[j].y;
-            const distance = Math.sqrt(dx*dx + dy*dy);
-
-            if (distance < connectionDistance) {
-                ctx.beginPath();
-                // Makin dekat makin tebal/jelas garisnya
-                const opacity = 1 - (distance / connectionDistance);
-                ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.15})`; 
-                ctx.lineWidth = 1;
-                ctx.moveTo(particles[i].x, particles[i].y);
-                ctx.lineTo(particles[j].x, particles[j].y);
-                ctx.stroke();
-            }
-        }
-        
-        // LOGIC KONEKSI KE MOUSE
-        if (mouse.x !== undefined && mouse.y !== undefined) {
-             const dx = particles[i].x - mouse.x;
-             const dy = particles[i].y - mouse.y;
-             const distance = Math.sqrt(dx*dx + dy*dy);
-
-             if (distance < 150) {
-                ctx.beginPath();
-                ctx.strokeStyle = `rgba(100, 200, 255, 0.2)`; // Garis ke mouse warna Biru Muda
-                ctx.lineWidth = 1;
-                ctx.moveTo(particles[i].x, particles[i].y);
-                ctx.lineTo(mouse.x, mouse.y);
-                ctx.stroke();
-             }
-        }
-      }
-      requestAnimationFrame(animate);
-    }
-
-    init();
-    animate();
-
-    const handleResize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-      init();
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    };
-    
-    const handleMouseLeave = () => {
-        mouse.x = undefined;
-        mouse.y = undefined;
-    }
-
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseout", handleMouseLeave);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseout", handleMouseLeave);
-    };
-  }, []);
-
   return (
-    <section id="home" className="relative min-h-screen flex flex-col justify-center items-center text-center px-4 overflow-hidden bg-[#000000]">
-      
-      {/* === BACKGROUND: NEURAL NETWORK === */}
-      <canvas 
-        ref={canvasRef}
-        className="absolute inset-0 z-0 opacity-60 pointer-events-none"
-      />
+    <>
+      {/* ===== FULLSCREEN HERO ===== */}
+      <div id="home" className="relative h-[100svh] w-full overflow-hidden bg-[#fcfbfa]">
+        <div className="pointer-events-none absolute inset-x-0 top-1/2 z-0 h-[70vh] w-full -translate-y-1/2 bg-[radial-gradient(circle_at_center,rgba(255,235,185,0.5)_0%,transparent_70%)]" />
 
-      {/* --- BACKGROUND GLOW --- */}
-      <motion.div 
-        animate={{ opacity: [0.2, 0.4, 0.2] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none z-0" 
-      />
-
-      {/* --- CONTENT UTAMA --- */}
-      <div className="z-10 max-w-5xl space-y-8 relative">
-        
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="inline-block"
-        >
-          <span className="px-4 py-1.5 rounded-full border border-white/10 bg-[#050505]/80 text-xs font-medium tracking-[0.2em] text-gray-400 backdrop-blur-md uppercase">
-            Portfolio
-          </span>
-        </motion.div>
-
-        {/* HEADLINE */}
-        <div className="relative overflow-hidden">
-            <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-            className="text-6xl md:text-8xl font-bold tracking-tighter leading-tight"
-            >
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-500 via-white to-gray-500 bg-[length:200%_auto] animate-shine">
-                Moch. Sugih Nugraha
-            </span>
-            </motion.h1>
+        <div className="animate-hero-fade-in pointer-events-none absolute inset-0 z-10 flex justify-center [mask-image:linear-gradient(to_bottom,black_80%,transparent_100%)]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/profile-sugih.jpg"
+            alt="Moch. Sugih Nugraha"
+            className="h-full w-full object-cover object-top md:w-auto md:max-w-[760px] md:[mask-image:linear-gradient(to_right,transparent_0%,black_18%,black_82%,transparent_100%)]"
+          />
         </div>
 
-        {/* Subheadline */}
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut", delay: 0.4 }}
-          className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-light"
-        >
-          Building highly autonomous and reliable digital products.
-          <br className="hidden md:block" />
-          <span className="text-gray-200 font-normal mt-2 block">
-            Product Engineer | Full-Stack (Next.js) | AI Automation Specialist
-          </span>
-        </motion.p>
-
-        {/* Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut", delay: 0.6 }}
-          className="flex flex-col sm:flex-row gap-5 justify-center pt-8"
-        >
-          <Link 
-            href="#projects"
-            className="px-8 py-3.5 bg-white text-black rounded-full font-medium text-lg hover:scale-105 transition-transform duration-300 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.3)]"
-          >
-            View Work
-          </Link>
-          
-          <a 
-            href="/cv-sugih.pdf" 
-            target="_blank" 
-            download
-            className="px-8 py-3.5 rounded-full font-medium text-lg text-white border border-white/20 hover:bg-white/10 transition-colors duration-300"
-          >
-            Download CV
-          </a>
-        </motion.div>
+        <div className="pointer-events-none absolute inset-0 z-20 flex w-full flex-col items-center justify-end pb-10 mix-blend-difference md:pb-20">
+          <div className="animate-hero-copy-in flex flex-col items-start">
+            <h3 className="mb-0 ml-1 font-[family-name:var(--font-shantell)] text-3xl font-light text-white md:mb-2 md:text-5xl">
+              hi, i&apos;m
+            </h3>
+            <h1 className="font-sf-pro hidden whitespace-nowrap text-[clamp(5rem,11vw,13rem)] font-semibold leading-[0.85] tracking-tighter text-white md:block">
+              Sugih Nugraha
+            </h1>
+            <h1 className="flex w-full flex-col items-center font-[family-name:var(--font-bebas)] text-[28vw] uppercase leading-[0.8] tracking-normal text-white sm:text-[22vw] md:hidden">
+              <span>Sugih</span>
+              <span className="text-white/80">Nugraha</span>
+            </h1>
+          </div>
+        </div>
       </div>
-    </section>
+
+      {/* ===== INTRO ===== */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-0 mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 sm:gap-x-14">
+          {stack.map((s) => (
+            <span
+              key={s}
+              className="font-sf-pro shrink-0 text-sm font-semibold uppercase tracking-wider text-zinc-400 sm:text-base"
+            >
+              {s}
+            </span>
+          ))}
+        </div>
+
+        <div className="mb-0 mt-10 flex items-center justify-center gap-6 sm:justify-start">
+          {socials.map(({ label, href, icon: Icon }) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+              className="text-zinc-400 transition-colors hover:text-zinc-900"
+            >
+              <Icon size={22} />
+            </a>
+          ))}
+        </div>
+
+        <div className="mb-12 mt-10">
+          <div className="max-w-5xl">
+            <h2 className="font-sf-pro mb-6 text-5xl font-medium leading-none tracking-tight sm:text-6xl lg:text-7xl">
+              <span className="text-zinc-900">I turn complex </span>
+              <span className="bg-gradient-to-b from-zinc-900 to-zinc-400 bg-clip-text text-transparent">ideas</span>
+              <br />
+              <span className="text-zinc-900">into </span>
+              <span className="bg-gradient-to-b from-zinc-900 to-zinc-400 bg-clip-text text-transparent">products</span>
+              <span className="text-zinc-900"> that ship.</span>
+            </h2>
+            <p className="max-w-3xl text-base leading-7 text-zinc-600 sm:text-lg sm:leading-8">
+              Moch. Sugih Nugraha is a Product Engineer based in Indonesia — Full-Stack (Next.js) and AI
+              Automation Specialist building highly autonomous and reliable digital products, from idea and
+              interface to backend, data, and automation.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <a
+                href="#portfolio"
+                className="flex items-center gap-2 rounded-full bg-zinc-900 px-6 py-3 font-medium text-white transition-colors hover:bg-zinc-800"
+              >
+                View Work <ArrowUpRight size={18} />
+              </a>
+              <a
+                href="/cv-sugih.pdf"
+                target="_blank"
+                download
+                className="flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-6 py-3 font-medium text-zinc-900 transition-colors hover:bg-zinc-50"
+              >
+                Download CV
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-20 flex flex-wrap items-center justify-between gap-4 rounded-full border border-zinc-200 bg-white px-6 py-4 text-sm font-medium text-zinc-700 shadow-sm">
+          <div className="flex items-center gap-2 text-emerald-600">
+            <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+            <span>Available for opportunities</span>
+          </div>
+          <div className="hidden items-center gap-2 text-zinc-400 md:flex">
+            <MapPin size={16} />
+            <span>Sugih • Product Engineer</span>
+          </div>
+          <div className="flex items-center gap-6">
+            <a href="https://wa.me/6285926270826" className="flex items-center gap-2 transition-colors hover:text-zinc-900">
+              <MessageCircle size={16} />
+              <span className="hidden sm:inline">WhatsApp</span>
+            </a>
+            <a href="mailto:mochsugihnugraha@gmail.com" className="flex items-center gap-2 transition-colors hover:text-zinc-900">
+              <Mail size={16} />
+              <span className="hidden sm:inline">Email</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

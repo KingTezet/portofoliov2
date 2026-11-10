@@ -1,22 +1,29 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Shantell_Sans, Bebas_Neue } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
-import InfiniteTicker from "@/components/InfiniteTicker"; // <--- IMPORT INI
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const shantell = Shantell_Sans({
+  variable: "--font-shantell",
   subsets: ["latin"],
+  weight: ["300", "400"],
+});
+
+const bebas = Bebas_Neue({
+  variable: "--font-bebas",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
-  title: "Moch. Sugih Nugraha",
-  description: "Trader & Multidisciplinary Creative",
+  title: "Moch. Sugih Nugraha | Product Engineer",
+  description:
+    "Product Engineer, Full-Stack (Next.js) & AI Automation Specialist building highly autonomous and reliable digital products.",
   icons: {
     icon: [
       {
@@ -26,7 +33,7 @@ export const metadata: Metadata = {
     ],
   },
   verification: {
-    google: "RJW3mxA5Onz8896dm4HhwMRimpMwRkTQVevNdkmpHiY", // <--- TAMBAHKAN KODE INI
+    google: "RJW3mxA5Onz8896dm4HhwMRimpMwRkTQVevNdkmpHiY",
   },
 };
 
@@ -36,17 +43,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#050505] text-white`}
+        className={`${inter.variable} ${shantell.variable} ${bebas.variable} font-sans bg-[#f5f5f4] text-zinc-900 antialiased`}
       >
-        {/* Konten Halaman (Home/About/dll) */}
         {children}
-        
-        {/* PEMBATAS ANTARA KONTEN & FOOTER */}
-        <InfiniteTicker /> {/* <--- PASANG DI SINI */}
-
-        {/* Footer */}
         <Footer />
       </body>
     </html>
