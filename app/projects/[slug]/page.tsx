@@ -22,7 +22,7 @@ function Cover({ project }: { project: ProjectEntry }) {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-      className="relative mb-12 aspect-video w-full overflow-hidden rounded-[2rem] bg-zinc-200 md:aspect-[21/9]"
+      className="relative mb-12 aspect-[4/3] w-full overflow-hidden rounded-[2rem] bg-zinc-200 md:aspect-[16/10]"
     >
       <motion.div style={{ y, scale }} className="absolute inset-0 will-change-transform">
         <ProjectCover project={project} />
@@ -147,6 +147,24 @@ export default function ProjectDetail() {
             </div>
 
             <div className="space-y-10">
+              {(project.services || project.productType) && (
+                <Reveal delay={0.05}>
+                  <dl className="space-y-4">
+                    {project.services && (
+                      <div>
+                        <dt className="font-mono text-[11px] uppercase tracking-wider text-zinc-500">Services</dt>
+                        <dd className="mt-1 text-base font-medium text-zinc-900">{project.services}</dd>
+                      </div>
+                    )}
+                    {project.productType && (
+                      <div>
+                        <dt className="font-mono text-[11px] uppercase tracking-wider text-zinc-500">Type of Product</dt>
+                        <dd className="mt-1 text-base font-medium text-zinc-900">{project.productType}</dd>
+                      </div>
+                    )}
+                  </dl>
+                </Reveal>
+              )}
               {cs?.role && (
                 <Block icon={User} title="My Role" delay={0.1}>
                   <p className="text-base leading-relaxed text-zinc-700">{cs.role}</p>

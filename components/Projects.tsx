@@ -9,6 +9,7 @@ import { impactHighlights } from "@/lib/projects";
 export default function Projects() {
   const { projects } = useProjects();
   const featured = projects.filter((p) => p.featured).slice(0, 4);
+  const more = projects.filter((p) => p.supporting);
 
   return (
     <>
@@ -64,6 +65,41 @@ export default function Projects() {
             </Reveal>
           ))}
         </div>
+
+        {more.length > 0 && (
+          <div className="mt-16">
+            <Reveal>
+              <div className="mb-6 flex items-end justify-between gap-4">
+                <div>
+                  <span className="mb-1 block font-mono text-xs uppercase tracking-wider text-zinc-500">More Work</span>
+                  <h3 className="font-sf-pro text-2xl font-medium tracking-tight text-zinc-900 md:text-3xl">Other projects &amp; products.</h3>
+                </div>
+              </div>
+            </Reveal>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {more.map((project, idx) => (
+                <Reveal key={project.slug} delay={(idx % 3) * 0.08} className="h-full">
+                  <Link
+                    href={`/projects/${project.slug}`}
+                    className="group flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200 bg-white transition-shadow duration-500 hover:shadow-[0_18px_50px_rgba(24,24,27,0.1)]"
+                  >
+                    <div className="relative aspect-[4/3] w-full overflow-hidden bg-zinc-100">
+                      <ProjectCover project={project} imgClassName="transition-transform duration-700 group-hover:scale-105" />
+                    </div>
+                    <div className="flex flex-grow flex-col p-5">
+                      <span className="mb-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500">{project.category}</span>
+                      <h4 className="font-sf-pro flex items-start justify-between gap-2 text-lg font-medium tracking-tight text-zinc-900">
+                        {project.title.split(" — ")[0]}
+                        <ArrowUpRight size={16} className="mt-1 shrink-0 text-zinc-400 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-zinc-900" />
+                      </h4>
+                      <p className="mt-1 line-clamp-2 text-sm leading-6 text-zinc-600">{project.summary}</p>
+                    </div>
+                  </Link>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="mt-10 flex justify-center md:hidden">
           <Link
