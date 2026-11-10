@@ -272,7 +272,7 @@ export const curatedProjects: ProjectEntry[] = [
     context: "Kopi Tobi · Sumedang",
     summary:
       "A company profile site for a Sumedang coffee shop, covering the menu, space, services, testimonials, and location with opening hours.",
-    tags: ["Company Profile", "Landing Page", "Google Maps"],
+    tags: ["Next.js", "Tailwind CSS", "Vercel"],
     thumbnail_url: "/images/projects/kopi-tobi.webp",
     supporting: true,
   },
