@@ -15,13 +15,15 @@ const socials = [
   { label: "Email", href: "mailto:mochsugihnugraha@gmail.com", icon: Mail },
 ];
 
-const stack = ["React", "Next.js", "TypeScript", "Tailwind CSS", "Supabase", "Framer Motion"];
+const stack = ["React", "Next.js", "TypeScript", "Tailwind CSS", "Supabase", "PostgreSQL"];
 
-const stats = [
-  { to: 5, suffix: "+", decimals: 0, label: "Years building for the web" },
-  { to: 3.9, suffix: "", decimals: 2, label: "GPA, B.S. Informatics" },
-  { to: 2, suffix: "×", decimals: 0, label: "University Innovation Challenge winner" },
-  { to: 8, suffix: "", decimals: 0, label: "Google Cloud badges earned" },
+type Stat = { label: string } & ({ to: number; suffix?: string; decimals?: number } | { text: string });
+
+const stats: Stat[] = [
+  { to: 5, suffix: "+", label: "Years building for the web" },
+  { to: 3.9, suffix: "/4.00", decimals: 2, label: "GPA, Informatics (expected 2027)" },
+  { text: "1st & 2nd", label: "University Innovation Challenge, 2024 & 2025" },
+  { to: 8, label: "Google Cloud skill badges" },
 ];
 
 export default function Hero() {
@@ -68,6 +70,9 @@ export default function Hero() {
               <span>Moch Sugih</span>
               <span className="text-white/80">Nugraha</span>
             </h1>
+            <p className="ml-1 mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-white/80 sm:text-xs md:mt-5 md:text-sm">
+              Frontend Engineer · React · Next.js · TypeScript
+            </p>
           </div>
         </motion.div>
 
@@ -114,26 +119,25 @@ export default function Hero() {
         <div className="mb-12 mt-10">
           <div className="max-w-5xl">
             <h2 className="font-sf-pro mb-6 text-5xl font-medium leading-none tracking-tight text-zinc-900 sm:text-6xl lg:text-7xl">
-              <SplitText text="I craft interfaces" />{" "}
-              <SplitText text="people" wordClassName={GRADIENT} delay={0.18} />
+              <SplitText text="I build web interfaces" />
               <br />
-              <SplitText text="love to" delay={0.24} />{" "}
-              <SplitText text="use." wordClassName={GRADIENT} delay={0.36} />
+              <SplitText text="for" delay={0.24} />{" "}
+              <SplitText text="real-world work." wordClassName={GRADIENT} delay={0.3} />
             </h2>
             <Reveal delay={0.2}>
               <p className="max-w-3xl text-base leading-7 text-zinc-600 sm:text-lg sm:leading-8">
-                Moch Sugih Nugraha is a Frontend Engineer based in Sumedang, Indonesia, building web interfaces with
-                React, Next.js, and TypeScript for small businesses and local government — online ordering,
-                operations dashboards, and map-based data tools. Open to remote work.
+                I&apos;m Moch Sugih Nugraha, a frontend engineer focused on React, Next.js, and TypeScript. I build
+                practical web products — from online ordering experiences and operations dashboards to map-based
+                data tools.
               </p>
             </Reveal>
             <Reveal delay={0.3}>
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <a
-                  href="#portfolio"
+                  href="#work"
                   className="group flex items-center gap-2 rounded-full bg-zinc-900 px-6 py-3 font-medium text-white transition-all duration-300 hover:bg-zinc-800 hover:shadow-[0_10px_30px_rgba(24,24,27,0.25)]"
                 >
-                  View Work
+                  Explore Selected Work
                   <ArrowUpRight size={18} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </a>
                 <a
@@ -153,8 +157,8 @@ export default function Hero() {
           {stats.map((s, i) => (
             <Reveal key={s.label} delay={i * 0.08} className="h-full">
               <div className="h-full rounded-3xl border border-zinc-200 bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(24,24,27,0.06)] sm:p-6">
-                <p className="font-sf-pro text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
-                  <CountUp to={s.to} suffix={s.suffix} decimals={s.decimals} />
+                <p className="font-sf-pro text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl lg:text-5xl">
+                  {"text" in s ? s.text : <CountUp to={s.to} suffix={s.suffix} decimals={s.decimals} />}
                 </p>
                 <p className="mt-2 text-xs leading-5 text-zinc-500 sm:text-sm">{s.label}</p>
               </div>
@@ -166,11 +170,11 @@ export default function Hero() {
           <div className="mb-20 flex flex-wrap items-center justify-between gap-4 rounded-full border border-zinc-200 bg-white px-6 py-4 text-sm font-medium text-zinc-700 shadow-sm">
             <div className="flex items-center gap-2 text-emerald-600">
               <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-              <span>Available for opportunities</span>
+              <span>Open to remote frontend roles &amp; selected projects</span>
             </div>
             <div className="hidden items-center gap-2 text-zinc-400 md:flex">
               <MapPin size={16} />
-              <span>Sumedang, Indonesia • Frontend Engineer</span>
+              <span>Based in Sumedang, Indonesia · Remote-ready</span>
             </div>
             <div className="flex items-center gap-6">
               <a href="https://wa.me/6285926270826" className="flex items-center gap-2 transition-colors hover:text-zinc-900">

@@ -1,42 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowUpRight, ExternalLink, Github, ImageOff, Search } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { ArrowLeft, ArrowUpRight, ExternalLink, Github, Search } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Reveal, SplitText, Tilt } from "@/components/motion";
-
-type Project = {
-  id: number;
-  title: string;
-  description: string;
-  thumbnail_url: string | null;
-  tech_stack: string[];
-  demo_url?: string;
-  repo_url?: string;
-  category: string;
-  slug: string;
-};
-
-const categories = ["All", "Full-Stack", "AI & Automation", "Frontend", "UI/UX"];
+import ProjectCover, { useProjects } from "@/components/ProjectCover";
 
 export default function ProjectsPage() {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const { projects } = useProjects();
   const [activeTab, setActiveTab] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchProjects() {
-      const { data, error } = await supabase.from("projects").select("*").order("id", { ascending: false });
-      if (error) console.error("Error:", error);
-      else setProjects(data || []);
-      setLoading(false);
-    }
-    fetchProjects();
-  }, []);
+  const categories = useMemo(() => ["All", ...Array.from(new Set(projects.map((p) => p.category)))], [projects]);
 
   const filtered = useMemo(() => {
     const q = searchQuery.toLowerCase();
@@ -45,8 +21,8 @@ export default function ProjectsPage() {
       if (!q) return true;
       return (
         p.title.toLowerCase().includes(q) ||
-        p.description?.toLowerCase().includes(q) ||
-        p.tech_stack?.some((t) => t.toLowerCase().includes(q))
+        p.summary?.toLowerCase().includes(q) ||
+        p.tags?.some((t) => t.toLowerCase().includes(q))
       );
     });
   }, [projects, activeTab, searchQuery]);
@@ -70,7 +46,7 @@ export default function ProjectsPage() {
               <SplitText text="Projects." delay={0.08} wordClassName="bg-gradient-to-b from-zinc-900 to-zinc-400 bg-clip-text text-transparent" />
             </h1>
             <Reveal delay={0.15}>
-              <p className="mt-4 text-lg text-zinc-600">Koleksi lengkap hasil karya dari berbagai bidang keahlian.</p>
+              <p className="mt-4 text-lg text-zinc-600">Web products, business tools, and supporting AI & automation work — with the context, my role, and the outcome for each.</p>
             </Reveal>
           </div>
 
@@ -92,7 +68,7 @@ export default function ProjectsPage() {
         <Reveal delay={0.15}>
           <div className="mb-12 inline-flex flex-wrap gap-1 rounded-full border border-zinc-200 bg-white p-1.5">
             {categories.map((cat) => (
-              <button key={cat} onClick={() => setActiveTab(cat)} className="relative rounded-full px-5 py-2 text-sm font-medium">
+              <button key={cat} onClick={() => setActiveTab(cat)} className="relative rounded-full px-4 py-2 text-sm font-medium sm:px-5">
                 {activeTab === cat && (
                   <motion.span
                     layoutId="project-tab"
@@ -107,19 +83,12 @@ export default function ProjectsPage() {
         </Reveal>
 
         {/* GRID */}
-        {loading ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-[380px] animate-pulse rounded-[2rem] bg-zinc-200/70" />
-            ))}
-          </div>
-        ) : (
           <motion.div layout className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             <AnimatePresence mode="popLayout">
               {filtered.map((project, index) => (
                 <motion.div
                   layout
-                  key={project.id}
+                  key={project.slug}
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.96 }}
@@ -131,20 +100,7 @@ export default function ProjectsPage() {
                       <Link href={`/projects/${project.slug}`} className="absolute inset-0 z-10" aria-label={`View ${project.title}`} />
 
                       <div className="relative aspect-[16/10] w-full overflow-hidden bg-zinc-100">
-                        <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-400">
-                          <ImageOff size={24} className="mb-2" />
-                          <span className="text-[10px] uppercase tracking-widest">No Preview</span>
-                        </div>
-                        {project.thumbnail_url && (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={project.thumbnail_url}
-                            alt={project.title}
-                            loading="lazy"
-                            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                            onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
-                          />
-                        )}
+                        <ProjectCover project={project} imgClassName="transition-transform duration-700 group-hover:scale-105" />
                         <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-900 backdrop-blur">
                           {project.category}
                         </span>
@@ -169,9 +125,10 @@ export default function ProjectsPage() {
                             )}
                           </div>
                         </div>
-                        <p className="mb-6 line-clamp-3 text-sm leading-6 text-zinc-600">{project.description}</p>
+                        {project.context && <p className="-mt-1 mb-3 text-xs font-medium text-zinc-400">{project.context}</p>}
+                        <p className="mb-6 text-sm leading-6 text-zinc-600">{project.summary}</p>
                         <div className="mt-auto flex flex-wrap gap-2">
-                          {project.tech_stack?.map((tech) => (
+                          {project.tags.map((tech) => (
                             <span key={tech} className="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-[11px] font-medium text-zinc-600">
                               {tech}
                             </span>
@@ -184,9 +141,8 @@ export default function ProjectsPage() {
               ))}
             </AnimatePresence>
           </motion.div>
-        )}
 
-        {!loading && filtered.length === 0 && (
+        {filtered.length === 0 && (
           <div className="mt-8 rounded-[2rem] border border-dashed border-zinc-300 py-32 text-center">
             <p className="text-zinc-500">No projects found matching your criteria.</p>
             <button

@@ -6,19 +6,7 @@ import { Users, MapPin, Zap, RefreshCcw, Fingerprint, ScanFace, Lock, Sparkles, 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { CountUp, Parallax, Reveal, SplitText } from "@/components/motion";
-
-// --- DATA NETWORK ---
-const network = [
-  { name: "Mick Alexandro", role: "Machine Trader", img: "https://ui-avatars.com/api/?name=Mick+Alexandra&background=18181b&color=fff" },
-  { name: "Evans Alexander", role: "Profesional Trader", img: "https://ui-avatars.com/api/?name=Evans+Alexander&background=18181b&color=fff" },
-  { name: "Dwi Rangga", role: "Investor Crypto", img: "https://ui-avatars.com/api/?name=Dwi+Rangga&background=random" },
-  { name: "Pradisa Fadzra", role: "Analyst & Comm. Mgr", img: "https://ui-avatars.com/api/?name=Pradisa+Fadzra&background=random" },
-  { name: "Bangkit Nugraha", role: "Founder Tradting", img: "https://ui-avatars.com/api/?name=Bangkit+Nugraha&background=random" },
-  { name: "Ricky Pauji", role: "Co-Founder Tradting", img: "https://ui-avatars.com/api/?name=Ricky+Pauji&background=random" },
-  { name: "Fathoni Mahardika S.Kom., M.T. ", role: "IT Lecturer", img: "https://ui-avatars.com/api/?name=Fathoni+Mahardika&background=random" },
-  { name: "M Iqbal Rivaldi", role: "Founder Tahungoding", img: "https://ui-avatars.com/api/?name=M+Iqbal+Rivaldi&background=random" },
-  { name: "Krisna Purnama", role: "Fullstack Engineer", img: "https://ui-avatars.com/api/?name=Krisna+Purnama&background=random" },
-];
+import { useProjects } from "@/components/ProjectCover";
 
 type GalleryItem = {
   id: number;
@@ -28,20 +16,21 @@ type GalleryItem = {
   location: string;
 };
 
-const categories = ["All", "Network", "Travel", "Life", "Work", "Certificate"];
 
+// Ordered by relevance to frontend roles; supporting skills are labelled as such.
 const skillGroups = [
-  { label: "Frontend", items: ["React", "Next.js (App Router)", "TypeScript", "JavaScript", "HTML", "CSS", "Tailwind CSS"] },
+  { label: "Frontend", primary: true, items: ["React", "Next.js (App Router)", "TypeScript", "JavaScript", "HTML", "CSS", "Tailwind CSS"] },
   { label: "Data & APIs", items: ["REST APIs", "Supabase", "PostgreSQL", "SQL", "Webhooks"] },
-  { label: "Backend (supporting)", items: ["Node.js", "PHP", "Laravel"] },
-  { label: "Tooling", items: ["Git/GitHub", "Vercel", "Docker", "CI/CD", "Linear", "n8n", "LLM API integration"] },
+  { label: "Backend — supporting", items: ["Node.js", "PHP", "Laravel"] },
+  { label: "Tools & Workflow", items: ["Git", "GitHub", "Vercel", "Docker", "CI/CD", "Linear", "Unit Testing Fundamentals"] },
+  { label: "Additional experience", items: ["n8n", "LLM API Integration"] },
 ];
 
 const highlights = [
-  { icon: Award, title: "Awards", text: "1st Place (2024) and 2nd Place (2025), University Innovation Challenge." },
+  { icon: Award, title: "Awards", text: "1st Place (2024) and 2nd Place (2025), University Innovation Challenge. 1st Place (Best Mentor) among 11 instructors at Tahungoding." },
   { icon: BookOpen, title: "Research", text: "Co-authored a usability analysis of the MPP Sumedang app (Jakob Nielsen model, PLS-SEM)." },
-  { icon: Sparkles, title: "Certifications", text: "Google Cloud LLM & Generative AI; Google Cloud Computing & ML (8 badges)." },
-  { icon: GraduationCap, title: "Education", text: "B.S. Informatics, Universitas Sebelas April (UNSAP) — GPA 3.90/4.00, 2023–2027." },
+  { icon: Sparkles, title: "Skill Badges", text: "Google Cloud LLM & Generative AI; Google Cloud Computing & ML — 8 skill badges." },
+  { icon: GraduationCap, title: "Education", text: "Universitas Sebelas April (UNSAP) — B.S. in Informatics · Expected 2027 · GPA 3.90/4.00." },
 ];
 
 // --- GAME COMPONENT: PROXIMITY SCANNER ---
@@ -234,23 +223,21 @@ function SectionLabel({ n, label }: { n: string; label: string }) {
 export default function AboutPage() {
   const [photos, setPhotos] = useState<GalleryItem[]>([]);
   const [activeTab, setActiveTab] = useState("All");
-  const [projectCount, setProjectCount] = useState<number | null>(null);
+  const { projects } = useProjects();
 
   useEffect(() => {
     async function fetchGallery() {
       const { data, error } = await supabase.from("gallery").select("*").order("id", { ascending: false });
       if (!error && data) setPhotos(data);
     }
-    async function fetchProjectCount() {
-      const { count, error } = await supabase.from("projects").select("*", { count: "exact", head: true });
-      if (!error) setProjectCount(count);
-    }
     fetchGallery();
-    fetchProjectCount();
   }, []);
 
+  // Only offer filters that actually have photos.
+  const categories = ["All", ...Array.from(new Set(photos.map((p) => p.category).filter(Boolean)))];
   const filteredPhotos =
     activeTab === "All" ? photos : photos.filter((p) => p.category?.toLowerCase() === activeTab.toLowerCase());
+  const showGallery = photos.length >= 3;
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-[#fcfbfa] text-zinc-900 selection:bg-zinc-900 selection:text-white">
@@ -289,9 +276,9 @@ export default function AboutPage() {
               <Reveal delay={0.16}>
                 <div className="rounded-3xl border border-zinc-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(24,24,27,0.06)]">
                   <span className="font-sf-pro mb-1 block text-4xl font-semibold tracking-tight">
-                    {projectCount !== null ? <CountUp to={projectCount} /> : "…"}
+                    <CountUp to={projects.length} />
                   </span>
-                  <span className="text-xs text-zinc-500">Projects</span>
+                  <span className="text-xs text-zinc-500">Projects shipped</span>
                 </div>
               </Reveal>
             </div>
@@ -309,17 +296,23 @@ export default function AboutPage() {
             <Reveal delay={0.1}>
               <div className="max-w-2xl space-y-5 text-lg leading-relaxed text-zinc-600">
                 <p>
-                  Hello! I&apos;m <strong className="font-semibold text-zinc-900">Moch Sugih Nugraha</strong>, a{" "}
-                  <strong className="font-semibold text-zinc-900">Frontend Engineer</strong> from Sumedang, West Java,
-                  building web interfaces with React, Next.js, and TypeScript for small businesses and local government.
+                  I&apos;m <strong className="font-semibold text-zinc-900">Moch Sugih Nugraha</strong>, a frontend
+                  engineer who enjoys building products that make everyday work simpler.
                 </p>
                 <p>
-                  I&apos;ve shipped online ordering, operations dashboards, and map-based data tools — including a Next.js
-                  portal scoring <strong className="font-semibold text-zinc-900">95+ on Lighthouse</strong> and a
-                  self-service ordering flow that handled <strong className="font-semibold text-zinc-900">500+ transactions</strong> in its first month.
+                  I work primarily with <strong className="font-semibold text-zinc-900">React, Next.js, and TypeScript</strong>.
+                  Across business and public-sector projects, I&apos;ve built online ordering experiences, operations
+                  dashboards, and map-based tools. I care about how an interface behaves in real use: clear
+                  interactions, responsive layouts, reliable data states, and maintainable implementation.
                 </p>
                 <p>
-                  I&apos;m used to remote, asynchronous work, and I&apos;m currently studying Informatics at UNSAP (GPA 3.90/4.00).
+                  I&apos;m comfortable collaborating across the frontend and the supporting data layer, including REST
+                  APIs, Supabase, and PostgreSQL. I also have experience with Laravel and workflow integrations when a
+                  product needs them.
+                </p>
+                <p>
+                  I&apos;m currently pursuing a B.S. in Informatics at Universitas Sebelas April (UNSAP), expected in
+                  2027, and am open to remote opportunities.
                 </p>
               </div>
             </Reveal>
@@ -330,12 +323,12 @@ export default function AboutPage() {
               </h3>
               {skillGroups.map((g, gi) => (
                 <Reveal key={g.label} delay={gi * 0.06}>
-                  <p className="mb-2 text-sm font-semibold text-zinc-900">{g.label}</p>
+                  <p className={`mb-2 text-sm font-semibold ${g.primary ? "text-zinc-900" : "text-zinc-500"}`}>{g.label}</p>
                   <div className="flex flex-wrap gap-2">
                     {g.items.map((s) => (
                       <span
                         key={s}
-                        className="cursor-default rounded-full border border-zinc-200 bg-white px-4 py-1.5 text-sm font-medium text-zinc-700 transition-all duration-300 hover:-translate-y-0.5 hover:border-zinc-900 hover:bg-zinc-900 hover:text-white"
+                        className={`cursor-default rounded-full border px-4 py-1.5 text-sm font-medium ${g.primary ? "border-zinc-900 bg-zinc-900 text-white" : "border-zinc-200 bg-white text-zinc-700"} transition-all duration-300 hover:-translate-y-0.5 hover:border-zinc-900 hover:bg-zinc-900 hover:text-white`}
                       >
                         {s}
                       </span>
@@ -352,7 +345,7 @@ export default function AboutPage() {
           <div className="mb-10">
             <SectionLabel n="02" label="Highlights" />
             <h2 className="font-sf-pro text-4xl font-medium tracking-tight md:text-5xl">
-              <SplitText text="Awards & learning." />
+              <SplitText text="Awards & recognition." />
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -370,41 +363,14 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* ===== NETWORK ===== */}
-        <section className="mb-32">
-          <div className="mb-8">
-            <SectionLabel n="03" label="Network" />
-            <h2 className="flex items-center gap-3 font-sf-pro text-4xl font-medium tracking-tight md:text-5xl">
-              <SplitText text="Connected with." />
-            </h2>
-          </div>
-          <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-            <motion.div
-              className="flex w-max gap-4"
-              animate={{ x: ["0%", "-50%"] }}
-              transition={{ repeat: Infinity, ease: "linear", duration: 40 }}
-            >
-              {[...network, ...network].map((person, idx) => (
-                <div key={idx} className="flex items-center gap-3 rounded-full border border-zinc-200 bg-white py-2 pl-2 pr-5">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={person.img} alt={person.name} className="h-9 w-9 rounded-full object-cover" />
-                  <div className="flex flex-col">
-                    <span className="text-xs font-semibold leading-tight text-zinc-900">{person.name}</span>
-                    <span className="text-[10px] leading-tight text-zinc-500">{person.role}</span>
-                  </div>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
-
-        {/* ===== GALLERY ===== */}
+        {/* ===== GALLERY (only when there are enough photos to be useful) ===== */}
+        {showGallery && (
         <section className="mb-32">
           <div className="mb-12 flex flex-col justify-between gap-8 md:flex-row md:items-end">
             <div>
-              <SectionLabel n="04" label="Visual Archives" />
+              <SectionLabel n="03" label="Beyond the Work" />
               <h2 className="font-sf-pro text-5xl font-medium tracking-tight md:text-7xl">
-                <SplitText text="Life Gallery." />
+                <SplitText text="Beyond the Work." />
               </h2>
             </div>
             <div className="flex w-full flex-wrap gap-1 rounded-full border border-zinc-200 bg-white p-1.5 md:w-auto">
@@ -441,17 +407,18 @@ export default function AboutPage() {
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={photo.image_url} alt={photo.caption} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                  <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/10 to-transparent p-6 opacity-0 transition duration-500 group-hover:opacity-100">
+                  <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/10 to-transparent p-6">
                     <span className="mb-2 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-white/70">
                       <MapPin size={10} /> {photo.location}
                     </span>
-                    <p className="translate-y-2 text-sm font-semibold leading-tight text-white transition-transform duration-500 group-hover:translate-y-0">{photo.caption}</p>
+                    <p className="text-sm font-semibold leading-tight text-white">{photo.caption}</p>
                   </div>
                 </motion.div>
               ))}
             </AnimatePresence>
           </motion.div>
         </section>
+        )}
 
         {/* ===== INNER CIRCLE ===== */}
         <section className="rounded-[2rem] border border-zinc-200 bg-[#f5f5f4] px-6 py-20 text-center">

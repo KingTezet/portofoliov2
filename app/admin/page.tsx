@@ -1,143 +1,129 @@
 "use client";
 
 import { useState } from "react";
-import { Lock, Layers, Map, Image as ImageIcon, LogOut, ShieldCheck, Activity } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, Image as ImageIcon, Layers, Lock, LogOut, Map, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
 
-// --- IMPORT KOMPONEN ---
 import ProjectManager from "../../components/admin/ProjectManager";
-import JourneyManager from "../../components/admin/JourneyManager"; 
-import GalleryManager from "../../components/admin/GalleryManager"; 
+import JourneyManager from "../../components/admin/JourneyManager";
+import GalleryManager from "../../components/admin/GalleryManager";
+
+const menuItems = [
+  { id: "projects", label: "Projects", icon: Layers },
+  { id: "gallery", label: "Gallery", icon: ImageIcon },
+  { id: "journey", label: "Journey", icon: Map },
+];
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [secret, setSecret] = useState("");
+  const [error, setError] = useState(false);
   const [activeTab, setActiveTab] = useState("projects");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (secret === "sugih-admin") { 
+    if (secret === "sugih-admin") {
       setIsAuthenticated(true);
+      setError(false);
     } else {
-      alert("ACCESS DENIED: INVALID PROTOCOL");
+      setError(true);
     }
   };
 
-  // --- 1. LOGIN SCREEN (Titanium Vault) ---
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4 relative overflow-hidden font-sans">
-        {/* Ambient Glow */}
-        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-blue-600/5 rounded-full blur-[150px] pointer-events-none"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-purple-600/5 rounded-full blur-[150px] pointer-events-none"></div>
-
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="w-full max-w-md relative z-10"
+      <div className="flex min-h-screen items-center justify-center bg-[#f5f5f4] p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full max-w-sm"
         >
-          <div className="bg-[#1c1c1e]/80 backdrop-blur-3xl border border-white/10 p-10 rounded-[32px] shadow-2xl relative overflow-hidden ring-1 ring-white/5">
-             {/* Glossy Header */}
-             <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
+          <div className="rounded-[2rem] border border-zinc-200 bg-white p-8 shadow-[0_18px_60px_rgba(24,24,27,0.06)] sm:p-10">
+            <div className="mb-8 text-center">
+              <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-900 text-white">
+                <Lock size={22} />
+              </div>
+              <h1 className="font-sf-pro text-2xl font-semibold tracking-tight text-zinc-900">Admin</h1>
+              <p className="mt-1 text-sm text-zinc-500">Moch Sugih Nugraha · Portfolio</p>
+            </div>
 
-             <div className="text-center mb-10 relative z-10">
-               <div className="w-20 h-20 bg-gradient-to-br from-[#2c2c2e] to-black rounded-[24px] border border-white/10 flex items-center justify-center mx-auto mb-6 shadow-xl">
-                 <Lock className="w-8 h-8 text-white/80" strokeWidth={1.5} />
-               </div>
-               <h1 className="text-2xl font-semibold text-white tracking-tight mb-2">Titanium Core</h1>
-               <p className="text-xs text-gray-500 font-medium tracking-widest uppercase">Restricted Access</p>
-             </div>
-
-             <form onSubmit={handleLogin} className="space-y-5 relative z-10">
-               <div className="relative group">
-                 <div className="absolute inset-0 bg-blue-500/20 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 rounded-2xl" />
-                 <input 
-                   type="password" 
-                   placeholder="Enter Passkey" 
-                   className="relative w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 text-center text-white font-medium tracking-[0.2em] outline-none focus:border-white/30 focus:bg-black/60 transition-all placeholder:text-gray-600 shadow-inner"
-                   value={secret}
-                   onChange={(e) => setSecret(e.target.value)}
-                 />
-               </div>
-               <button type="submit" className="w-full bg-white text-black font-semibold py-4 rounded-2xl hover:bg-gray-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-widest shadow-lg shadow-white/5">
-                 <ShieldCheck size={16} /> Authenticate
-               </button>
-             </form>
+            <form onSubmit={handleLogin} className="space-y-3">
+              <input
+                type="password"
+                placeholder="Passkey"
+                autoFocus
+                className={`w-full rounded-full border bg-zinc-50 px-5 py-3.5 text-center text-sm text-zinc-900 outline-none transition-all placeholder:text-zinc-400 focus:bg-white ${
+                  error ? "border-red-300 focus:border-red-400" : "border-zinc-200 focus:border-zinc-900"
+                }`}
+                value={secret}
+                onChange={(e) => setSecret(e.target.value)}
+              />
+              {error && <p className="text-center text-xs text-red-500">Passkey salah.</p>}
+              <button
+                type="submit"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-zinc-900 py-3.5 text-sm font-medium text-white transition-all hover:bg-zinc-800 active:scale-[0.98]"
+              >
+                <ShieldCheck size={16} /> Masuk
+              </button>
+            </form>
           </div>
+          <Link href="/" className="mt-6 flex items-center justify-center gap-2 text-sm text-zinc-500 transition-colors hover:text-zinc-900">
+            <ArrowLeft size={14} /> Kembali ke situs
+          </Link>
         </motion.div>
       </div>
     );
   }
 
-  // --- 2. DASHBOARD AREA ---
-  const menuItems = [
-    { id: "projects", label: "Projects", icon: Layers },
-    { id: "journey", label: "Journey", icon: Map },
-    { id: "gallery", label: "Gallery", icon: ImageIcon },
-  ];
-
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-sans flex overflow-hidden">
-      
-      {/* SIDEBAR - Titanium Glass */}
-      <aside className="w-20 lg:w-72 bg-[#121212]/80 backdrop-blur-xl border-r border-white/5 flex flex-col justify-between p-6 z-20 sticky top-0 h-screen transition-all">
-        <div>
-          <div className="h-20 flex items-center justify-center lg:justify-start gap-4 mb-10 pl-2">
-            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg shadow-white/10">
-              <Activity className="text-black" size={20} strokeWidth={2.5}/>
-            </div>
-            <div className="hidden lg:block">
-                <h1 className="font-bold text-lg tracking-tight leading-none text-white">SGH.</h1>
-                <span className="text-[10px] font-medium text-gray-500 uppercase tracking-widest">Admin Console</span>
+    <div className="min-h-screen bg-[#f5f5f4] text-zinc-900">
+      <header className="sticky top-0 z-40 border-b border-zinc-200 bg-[#f5f5f4]/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-900 font-sf-pro text-sm font-semibold text-white">S</div>
+            <div className="hidden sm:block">
+              <p className="text-sm font-semibold leading-none">Admin</p>
+              <p className="mt-0.5 text-xs text-zinc-500">Portfolio content</p>
             </div>
           </div>
 
-          <nav className="space-y-3">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              const active = activeTab === item.id;
-              return (
-                <button 
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full p-3 lg:px-5 lg:py-4 rounded-2xl flex items-center justify-center lg:justify-start gap-4 transition-all relative group ${active ? "bg-white/10 text-white shadow-inner" : "text-gray-500 hover:text-white hover:bg-white/5"}`}
-                >
-                  <Icon size={20} className={active ? "text-white" : "text-gray-500 group-hover:text-white transition-colors"} strokeWidth={active ? 2.5 : 2} />
-                  <span className="hidden lg:block text-xs font-semibold uppercase tracking-wide">{item.label}</span>
-                  
-                  {/* Active Indicator Line */}
-                  {active && <motion.div layoutId="activeTab" className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full shadow-[0_0_10px_rgba(255,255,255,0.5)]" />}
-                </button>
-              )
-            })}
+          <nav className="flex gap-1 rounded-full border border-zinc-200 bg-white p-1">
+            {menuItems.map(({ id, label, icon: Icon }) => (
+              <button key={id} onClick={() => setActiveTab(id)} className="relative rounded-full px-3 py-1.5 text-sm font-medium sm:px-4">
+                {activeTab === id && (
+                  <motion.span layoutId="admin-tab" className="absolute inset-0 rounded-full bg-zinc-900" transition={{ type: "spring", stiffness: 380, damping: 32 }} />
+                )}
+                <span className={`relative flex items-center gap-1.5 ${activeTab === id ? "text-white" : "text-zinc-500 hover:text-zinc-900"}`}>
+                  <Icon size={15} />
+                  <span className="hidden sm:inline">{label}</span>
+                </span>
+              </button>
+            ))}
           </nav>
-        </div>
 
-        <button onClick={() => setIsAuthenticated(false)} className="p-3 lg:px-5 lg:py-4 rounded-2xl flex items-center justify-center lg:justify-start gap-4 text-gray-500 hover:bg-red-500/10 hover:text-red-400 transition-all group">
-          <LogOut size={20} className="group-hover:translate-x-[-2px] transition-transform"/>
-          <span className="hidden lg:block text-xs font-bold uppercase tracking-wide">Logout</span>
-        </button>
-      </aside>
-
-      {/* MAIN CONTENT AREA */}
-      <main className="flex-1 h-screen overflow-y-auto relative scrollbar-hide bg-[#050505]">
-        {/* Background Noise Texture */}
-        <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none fixed"></div>
-        
-        {/* Content Wrapper */}
-        <div className="max-w-[90rem] mx-auto p-6 lg:p-12 pb-40">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            {activeTab === "projects" && <ProjectManager />}
-            {activeTab === "journey" && <JourneyManager />}
-            {activeTab === "gallery" && <GalleryManager />}
-          </motion.div>
+          <div className="flex items-center gap-2">
+            <Link href="/" target="_blank" className="hidden rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 md:block">
+              Lihat situs
+            </Link>
+            <button
+              onClick={() => setIsAuthenticated(false)}
+              aria-label="Logout"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-500 transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-500"
+            >
+              <LogOut size={16} />
+            </button>
+          </div>
         </div>
+      </header>
+
+      <main className="mx-auto max-w-7xl px-4 pb-32 pt-10 sm:px-6 lg:px-8">
+        <motion.div key={activeTab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+          {activeTab === "projects" && <ProjectManager />}
+          {activeTab === "journey" && <JourneyManager />}
+          {activeTab === "gallery" && <GalleryManager />}
+        </motion.div>
       </main>
     </div>
   );

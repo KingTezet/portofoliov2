@@ -2,137 +2,135 @@
 
 import Link from "next/link";
 import { Reveal, SplitText, Tilt } from "@/components/motion";
-import { ArrowUpRight, Code2, Layers, LayoutDashboard, Sparkles, Workflow, Zap } from "lucide-react";
+import { ArrowUpRight, Database, Layers, LayoutDashboard, Map } from "lucide-react";
+import { curatedProjects } from "@/lib/projects";
 
-const services = [
-  { tag: "Frontend", title: "Web Apps & Dashboards", desc: "React + Next.js App Router interfaces for ordering, operations and admin dashboards.", icon: LayoutDashboard },
-  { tag: "Performance", title: "Fast by Default", desc: "Core Web Vitals, Lighthouse 95+, lean bundles and optimized images.", icon: Zap },
-  { tag: "UI/UX", title: "Interface Engineering", desc: "Pixel-accurate, accessible and responsive UI from design to code.", icon: Layers },
-  { tag: "Motion", title: "Interactions & Animation", desc: "Framer Motion micro-interactions that feel smooth without slowing pages down.", icon: Sparkles },
-  { tag: "Data", title: "API & Data Integration", desc: "REST APIs, Supabase and PostgreSQL wired cleanly into the frontend.", icon: Workflow },
-  { tag: "Maps", title: "Map-based Data Tools", desc: "Web mapping views for spatial data, uploads, search and filtering.", icon: Code2 },
+const focus = [
+  {
+    n: "01",
+    title: "Web Apps & Dashboards",
+    desc: "Customer-facing applications and internal tools built with React and Next.js — from ordering experiences to operational dashboards.",
+    icon: LayoutDashboard,
+  },
+  {
+    n: "02",
+    title: "Interface Engineering",
+    desc: "Responsive, detail-oriented interfaces translated from product requirements and design into maintainable frontend code.",
+    icon: Layers,
+  },
+  {
+    n: "03",
+    title: "API & Data Integration",
+    desc: "Frontend features connected to REST APIs, Supabase, and PostgreSQL, with clear loading, error, and empty states.",
+    icon: Database,
+  },
+  {
+    n: "04",
+    title: "Map-based Data Tools",
+    desc: "Browser-based spatial data experiences with map layers, SHP uploads, record search, and filtering.",
+    icon: Map,
+  },
 ];
 
-const code = [
-  [{ c: "text-zinc-500", t: "// Sugih — frontend stack" }],
-  [
-    { c: "text-purple-400", t: "import" },
-    { c: "text-zinc-300", t: " { build } " },
-    { c: "text-purple-400", t: "from" },
-    { c: "text-amber-300", t: " '@sugih/frontend'" },
-  ],
-  [],
-  [
-    { c: "text-purple-400", t: "const" },
-    { c: "text-sky-300", t: " app" },
-    { c: "text-zinc-400", t: " =" },
-    { c: "text-sky-200", t: " build" },
-  ],
-  [{ c: "text-zinc-300", t: "  ." }, { c: "text-yellow-300", t: "stack" }, { c: "text-zinc-300", t: "(" }, { c: "text-amber-300", t: "'nextjs'" }, { c: "text-zinc-300", t: ", " }, { c: "text-amber-300", t: "'tailwind'" }, { c: "text-zinc-300", t: ")" }],
-  [{ c: "text-zinc-300", t: "  ." }, { c: "text-yellow-300", t: "animate" }, { c: "text-zinc-300", t: "(" }, { c: "text-amber-300", t: "'framer-motion'" }, { c: "text-zinc-300", t: ")" }],
-  [{ c: "text-zinc-300", t: "  ." }, { c: "text-yellow-300", t: "ship" }, { c: "text-zinc-300", t: "(" }, { c: "text-amber-300", t: "'production'" }, { c: "text-zinc-300", t: ")" }],
-  [],
-  [{ c: "text-purple-400", t: "export default" }, { c: "text-sky-300", t: " app" }],
-];
+// Real product screenshots instead of a decorative code editor.
+const shots = curatedProjects.filter((p) => p.thumbnail_url).slice(0, 2);
+
+function BrowserShot({ src, url, alt, className }: { src: string; url: string; alt: string; className?: string }) {
+  return (
+    <div className={`overflow-hidden rounded-xl border border-white/10 bg-[#161618] shadow-[0_30px_80px_rgba(0,0,0,0.6)] ${className}`}>
+      <div className="flex items-center gap-1.5 border-b border-white/[0.06] bg-[#1c1c1e] px-3 py-2">
+        <span className="h-2.5 w-2.5 rounded-full bg-[#FF5F57]" />
+        <span className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]" />
+        <span className="h-2.5 w-2.5 rounded-full bg-[#28C840]" />
+        <span className="ml-3 truncate rounded-md bg-white/5 px-2 py-0.5 font-mono text-[10px] text-zinc-400">{url}</span>
+      </div>
+      <div className="relative aspect-[16/10]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={src} alt={alt} loading="lazy" className="absolute inset-0 h-full w-full object-cover object-top" />
+      </div>
+    </div>
+  );
+}
 
 export default function Services() {
   return (
-    <section id="services" className="mx-auto mt-12 max-w-7xl scroll-mt-24 rounded-[2rem] bg-zinc-900 px-8 py-24 text-white sm:px-12 lg:px-16">
-      <div className="mb-16 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-        <div className="flex flex-col text-right md:w-full md:items-end">
-          <span className="mb-4 flex w-full items-center justify-end gap-2 font-mono text-xs uppercase tracking-wider text-zinc-500">
-            <Sparkles size={14} /> What I Build
-          </span>
-          <h2 className="font-sf-pro text-5xl font-medium tracking-tight md:text-7xl"><SplitText text="My Services." /></h2>
-        </div>
+    <section id="focus" className="mx-auto mb-32 max-w-7xl scroll-mt-24 rounded-[2rem] bg-zinc-900 px-6 py-20 text-white sm:px-12 sm:py-24 lg:px-16">
+      <div className="mb-14 flex flex-col md:items-end md:text-right">
+        <span className="mb-4 block font-mono text-xs uppercase tracking-wider text-zinc-500">(04) Areas of Focus</span>
+        <h2 className="font-sf-pro text-5xl font-medium tracking-tight md:text-7xl">
+          <SplitText text="What I Build." />
+        </h2>
       </div>
 
-      <div className="mt-12 flex w-full flex-col gap-6">
+      <div className="flex w-full flex-col gap-6">
         <Reveal>
-        <div className="group relative overflow-hidden rounded-[2rem] border border-zinc-800 bg-[#0d0d0d] lg:min-h-[560px]">
-          <div className="grid h-full grid-cols-1 lg:grid-cols-2">
-            <div className="flex h-full flex-col justify-between p-6 sm:p-10 lg:p-16">
-              <div>
-                <span className="mb-3 block font-mono text-xs uppercase tracking-widest text-zinc-500 sm:mb-6">Featured</span>
-                <h3 className="font-sf-pro mb-3 text-3xl font-medium leading-[1.05] tracking-tight text-white sm:mb-5 sm:text-5xl lg:text-6xl">
-                  Fast,
-                  <br />
-                  Accessible
-                  <br />
-                  Interfaces
-                </h3>
-                <p className="max-w-sm text-sm leading-relaxed text-zinc-400 sm:text-base">
-                  Interfaces that load fast, feel smooth, and stay maintainable — built with React, Next.js,
-                  TypeScript and Tailwind CSS, from design to deployment.
-                </p>
+          <div className="relative overflow-hidden rounded-[2rem] border border-zinc-800 bg-[#0d0d0d]">
+            <div className="grid grid-cols-1 lg:grid-cols-2">
+              <div className="flex flex-col justify-between p-6 sm:p-10 lg:p-16">
+                <div>
+                  <span className="mb-3 block font-mono text-xs uppercase tracking-widest text-zinc-500 sm:mb-6">Featured</span>
+                  <h3 className="font-sf-pro mb-4 text-3xl font-medium leading-[1.05] tracking-tight text-white sm:mb-6 sm:text-5xl lg:text-6xl">
+                    From interface
+                    <br />
+                    to working product.
+                  </h3>
+                  <p className="max-w-md text-sm leading-relaxed text-zinc-400 sm:text-base">
+                    I build the frontend experiences behind online ordering, operations dashboards, and data-heavy
+                    tools. My focus is on clear interactions, responsive layouts, and maintainable React and Next.js
+                    applications.
+                  </p>
+                </div>
+                <div className="mt-8 sm:mt-10">
+                  <a
+                    href="#work"
+                    className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100"
+                  >
+                    Explore Selected Work <ArrowUpRight size={16} />
+                  </a>
+                </div>
               </div>
-              <div className="mt-6 sm:mt-10">
-                <Link
-                  href="/projects"
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100"
-                >
-                  See Projects <ArrowUpRight size={16} />
-                </Link>
-              </div>
-            </div>
 
-            <div className="relative flex items-center justify-center p-6 sm:p-8 lg:min-h-[560px]">
-              <Tilt max={8} className="w-full max-w-sm">
-              <div className="w-full cursor-default select-none overflow-hidden rounded-2xl bg-[#161618] shadow-[0_30px_80px_rgba(0,0,0,0.7)]">
-                <div className="flex items-center gap-1.5 border-b border-white/[0.06] bg-[#1c1c1e] px-4 py-3">
-                  <span className="h-3 w-3 rounded-full bg-[#FF5F57]" />
-                  <span className="h-3 w-3 rounded-full bg-[#FEBC2E]" />
-                  <span className="h-3 w-3 rounded-full bg-[#28C840]" />
-                  <div className="ml-4 flex gap-5">
-                    <span className="border-b border-zinc-400 pb-px text-[11px] text-zinc-200">app.ts</span>
-                    <span className="text-[11px] text-zinc-500">agent.ts</span>
-                    <span className="text-[11px] text-zinc-500">deploy.ts</span>
-                  </div>
-                </div>
-                <div className="px-4 py-4 font-mono text-[11.5px] leading-[1.85]">
-                  {code.map((line, i) => (
-                    <div key={i} className="flex gap-3">
-                      <span className="w-4 shrink-0 select-none text-right text-zinc-700">{i + 1}</span>
-                      <span className="whitespace-pre">
-                        {line.length === 0 ? " " : line.map((tok, j) => <span key={j} className={tok.c}>{tok.t}</span>)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className="mx-4 mb-4 rounded-xl border border-white/[0.05] bg-white/[0.04] px-4 py-3">
-                  <p className="mb-0.5 text-sm font-semibold text-white">Design to production, pixel-perfect.</p>
-                  <p className="text-xs leading-relaxed text-zinc-500">Responsive, accessible, and 95+ on Lighthouse.</p>
-                </div>
-              </div>
-              </Tilt>
-              <div className="absolute bottom-4 right-4 flex items-center gap-2 rounded-full bg-zinc-900/80 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-                Open for projects
+              <div className="relative flex min-h-[320px] items-center justify-center p-6 sm:min-h-[420px] sm:p-10">
+                <Tilt max={6} className="relative w-full max-w-md">
+                  {shots[1] && (
+                    <Link href={`/projects/${shots[1].slug}`} aria-label={shots[1].title}>
+                      <BrowserShot
+                        src={shots[1].thumbnail_url!}
+                        url={shots[1].demo_url?.replace(/^https?:\/\/(www\.)?/, "") ?? ""}
+                        alt={shots[1].title}
+                        className="absolute -right-2 -top-8 w-[78%] rotate-3 opacity-80 transition-transform duration-500 hover:-translate-y-1 sm:-right-6"
+                      />
+                    </Link>
+                  )}
+                  {shots[0] && (
+                    <Link href={`/projects/${shots[0].slug}`} aria-label={shots[0].title} className="relative mt-16 block w-[88%]">
+                      <BrowserShot
+                        src={shots[0].thumbnail_url!}
+                        url={shots[0].demo_url?.replace(/^https?:\/\/(www\.)?/, "") ?? ""}
+                        alt={shots[0].title}
+                        className="-rotate-2 transition-transform duration-500 hover:-translate-y-1"
+                      />
+                    </Link>
+                  )}
+                </Tilt>
               </div>
             </div>
           </div>
-        </div>
         </Reveal>
 
-        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
-          {services.map(({ tag, title, desc, icon: Icon }, i) => (
-            <Reveal key={title} delay={(i % 3) * 0.08} className="h-full">
-            <div
-              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 transition-all duration-500 hover:-translate-y-2 hover:border-zinc-700 hover:shadow-2xl sm:rounded-[28px]"
-            >
-              <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-zinc-800">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-zinc-900 text-white drop-shadow-2xl transition-all duration-500 group-hover:rotate-3 group-hover:scale-110 sm:h-20 sm:w-20">
-                  <Icon size={32} />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
+          {focus.map(({ n, title, desc, icon: Icon }, i) => (
+            <Reveal key={title} delay={(i % 2) * 0.08} className="h-full">
+              <div className="group flex h-full gap-5 rounded-[1.75rem] border border-zinc-800 bg-zinc-900 p-6 transition-all duration-500 hover:-translate-y-1 hover:border-zinc-700 hover:bg-[#1f1f22] sm:p-8">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-zinc-800 text-white transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110">
+                  <Icon size={22} />
                 </div>
-              </div>
-              <div className="flex flex-col gap-1.5 px-3 py-3 sm:gap-3 sm:px-6 sm:py-5">
                 <div>
-                  <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-500 sm:text-xs">{tag}</span>
-                  <h3 className="mt-0.5 text-sm font-semibold leading-snug text-white sm:text-lg">{title}</h3>
+                  <span className="font-mono text-xs text-zinc-500">{n}</span>
+                  <h3 className="mb-2 mt-0.5 text-lg font-semibold text-white">{title}</h3>
+                  <p className="text-sm leading-relaxed text-zinc-400">{desc}</p>
                 </div>
-                <p className="hidden text-sm leading-relaxed text-zinc-400 sm:block">{desc}</p>
               </div>
-            </div>
             </Reveal>
           ))}
         </div>

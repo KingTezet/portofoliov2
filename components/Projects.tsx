@@ -1,123 +1,106 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, ImageOff } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { ArrowUpRight } from "lucide-react";
 import { Reveal, SplitText, Tilt } from "@/components/motion";
-
-type Project = {
-  id: number;
-  title: string;
-  description: string;
-  thumbnail_url: string | null;
-  tech_stack: string[];
-  demo_url?: string;
-  repo_url?: string;
-  category: string;
-  slug: string;
-};
+import ProjectCover, { useProjects } from "@/components/ProjectCover";
+import { impactHighlights } from "@/lib/projects";
 
 export default function Projects() {
-  const [projects, setProjects] = useState<Project[]>([]);
-
-  useEffect(() => {
-    async function fetchProjects() {
-      const { data, error } = await supabase
-        .from("projects")
-        .select("*")
-        .order("id", { ascending: false })
-        .limit(6);
-
-      if (error) console.error(error);
-      else setProjects(data || []);
-    }
-    fetchProjects();
-  }, []);
+  const { projects } = useProjects();
+  const featured = projects.filter((p) => p.featured).slice(0, 4);
 
   return (
-    <section id="portfolio" className="mb-32 scroll-mt-24">
-      <div className="mb-10 flex items-end justify-between">
-        <div>
-          <span className="mb-2 block font-mono text-xs uppercase tracking-wider text-zinc-500">(01) Recent Work</span>
-          <h2 className="font-sf-pro text-4xl font-medium tracking-tight text-zinc-900 md:text-5xl"><SplitText text="My Portfolio." /></h2>
+    <>
+      <section id="work" className="mb-24 scroll-mt-24">
+        <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+          <div>
+            <span className="mb-2 block font-mono text-xs uppercase tracking-wider text-zinc-500">(01) Selected Work</span>
+            <h2 className="font-sf-pro text-4xl font-medium tracking-tight text-zinc-900 md:text-5xl">
+              <SplitText text="Selected Work." />
+            </h2>
+            <Reveal delay={0.1}>
+              <p className="mt-3 max-w-xl text-zinc-600">
+                A selection of web products, business tools, and interfaces I&apos;ve helped build.
+              </p>
+            </Reveal>
+          </div>
+          <Link
+            href="/projects"
+            className="hidden shrink-0 items-center gap-2 rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-zinc-50 md:flex"
+          >
+            View All Projects <ArrowUpRight size={16} />
+          </Link>
         </div>
-        <Link
-          href="/projects"
-          className="hidden items-center gap-2 rounded-full border border-zinc-200 px-4 py-2 text-sm font-medium transition-colors hover:bg-zinc-50 md:flex"
-        >
-          View All Projects <ArrowUpRight size={16} />
-        </Link>
-      </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {projects.map((project, idx) => {
-          const external = project.category === "Editor Video";
-          const href = external ? project.demo_url || "#" : `/projects/${project.slug}`;
-          const tags = (project.tech_stack || []).slice(0, 3);
-
-          return (
-            <Reveal key={project.id} delay={(idx % 3) * 0.1}>
-            <Tilt max={4}>
-            <Link
-              href={href}
-              target={external ? "_blank" : undefined}
-              rel={external ? "noopener noreferrer" : undefined}
-              className="group relative block aspect-[16/10] cursor-pointer overflow-hidden rounded-2xl bg-zinc-200 shadow-sm transition-shadow duration-500 hover:shadow-[0_24px_60px_rgba(24,24,27,0.18)]"
-            >
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-400">
-                <ImageOff size={24} className="mb-2" />
-                <span className="text-[10px] uppercase tracking-widest">No Preview</span>
-              </div>
-              {project.thumbnail_url && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={project.thumbnail_url}
-                  alt={project.title}
-                  loading="lazy"
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
-                />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/0 opacity-90" />
-              <div className="absolute bottom-0 left-0 flex w-full items-end justify-between p-6">
-                <div className="min-w-0 flex-1">
-                  <p className="mb-1 text-xs font-medium text-white/70">{project.category}</p>
-                  <h3 className="mb-2 text-xl font-medium text-white">{project.title}</h3>
-                  {tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
-                      {tags.map((t, i) => (
-                        <span
-                          key={t}
-                          className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold backdrop-blur-md ${
-                            i % 2 === 0 ? "bg-emerald-500/40 text-emerald-100" : "bg-sky-500/40 text-sky-100"
-                          }`}
-                        >
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {featured.map((project, idx) => (
+            <Reveal key={project.slug} delay={(idx % 2) * 0.1} className="h-full">
+              <Tilt max={3} className="h-full">
+                <Link
+                  href={`/projects/${project.slug}`}
+                  className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-zinc-200 bg-white shadow-[0_18px_60px_rgba(24,24,27,0.05)] transition-shadow duration-500 hover:shadow-[0_24px_70px_rgba(24,24,27,0.12)]"
+                >
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-zinc-100">
+                    <ProjectCover project={project} imgClassName="transition-transform duration-700 group-hover:scale-105" />
+                    <span className="absolute bottom-4 right-4 flex h-10 w-10 translate-y-2 items-center justify-center rounded-full bg-white/90 text-zinc-900 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                      <ArrowUpRight size={18} />
+                    </span>
+                  </div>
+                  <div className="flex flex-grow flex-col p-6 sm:p-7">
+                    <span className="mb-2 font-mono text-[11px] uppercase tracking-wider text-zinc-500">{project.category}</span>
+                    <h3 className="font-sf-pro mb-3 text-2xl font-medium tracking-tight text-zinc-900">{project.title}</h3>
+                    <p className="mb-6 text-sm leading-6 text-zinc-600">{project.summary}</p>
+                    <div className="mt-auto flex flex-wrap gap-2">
+                      {project.tags.map((t) => (
+                        <span key={t} className="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-[11px] font-medium text-zinc-600">
                           {t}
                         </span>
                       ))}
                     </div>
-                  )}
-                </div>
-                <div className="ml-3 flex h-10 w-10 shrink-0 translate-y-2 transform items-center justify-center rounded-full bg-white/20 text-white opacity-0 backdrop-blur-md transition-opacity group-hover:translate-y-0 group-hover:opacity-100">
-                  <ArrowUpRight size={18} />
-                </div>
-              </div>
-            </Link>
-            </Tilt>
+                  </div>
+                </Link>
+              </Tilt>
             </Reveal>
-          );
-        })}
-      </div>
+          ))}
+        </div>
 
-      <div className="mt-10 flex justify-center md:hidden">
-        <Link
-          href="/projects"
-          className="flex items-center gap-2 rounded-full border border-zinc-200 px-6 py-3 text-sm font-medium transition-colors hover:bg-zinc-50"
-        >
-          View All Projects <ArrowUpRight size={16} />
-        </Link>
-      </div>
-    </section>
+        <div className="mt-10 flex justify-center md:hidden">
+          <Link
+            href="/projects"
+            className="flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-6 py-3 text-sm font-medium transition-colors hover:bg-zinc-50"
+          >
+            View All Projects <ArrowUpRight size={16} />
+          </Link>
+        </div>
+      </section>
+
+      {/* ===== IMPACT HIGHLIGHTS ===== */}
+      <section className="mb-32">
+        <div className="mb-8">
+          <span className="mb-2 block font-mono text-xs uppercase tracking-wider text-zinc-500">(02) Impact Highlights</span>
+          <h2 className="font-sf-pro text-4xl font-medium tracking-tight text-zinc-900 md:text-5xl">
+            <SplitText text="Measured results." />
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+          {impactHighlights.map((h, i) => (
+            <Reveal key={h.label} delay={i * 0.08} className="h-full">
+              <Link
+                href={`/projects/${h.slug}`}
+                className="group flex h-full flex-col rounded-3xl border border-zinc-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(24,24,27,0.06)]"
+              >
+                <p className="font-sf-pro text-4xl font-semibold tracking-tight text-zinc-900">{h.value}</p>
+                <p className="mt-2 text-sm leading-6 text-zinc-600">{h.label}</p>
+                <span className="mt-auto flex items-center gap-1 pt-5 text-xs font-medium text-zinc-400 transition-colors group-hover:text-zinc-900">
+                  {h.project}
+                  <ArrowUpRight size={14} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </span>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+    </>
   );
 }

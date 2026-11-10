@@ -18,10 +18,10 @@ const experience: ExperienceItem[] = [
     org: "Chogo Coffee · Contract, Remote",
     period: "May 2026 — Present",
     points: [
-      "Built the Next.js App Router interface and Supabase data layer for an operations platform that puts POS, online ordering, attendance, payroll, and loyalty in one system.",
+      "Built the Next.js App Router interface and Supabase data layer for an F&B operations platform covering POS, online ordering, attendance, payroll, and loyalty.",
       "Launched a self-service ordering flow that processed 500+ transactions in its first month.",
+      "Automated daily financial reconciliation with Supabase database triggers, reducing end-of-day closing from about 4 hours to under 30 minutes.",
       "Replaced a multi-day manual payroll process with a one-click dashboard report.",
-      "Automated daily financial reconciliation with Supabase database triggers, cutting the end-of-day close from about 4 hours to under 30 minutes.",
     ],
   },
   {
@@ -29,8 +29,8 @@ const experience: ExperienceItem[] = [
     org: "PT Ngulik Teknologi Digital",
     period: "Mar 2026 — Present",
     points: [
-      "Built Affligen, an LLM-powered tool that turns a product image into publish-ready marketing copy, cutting content preparation from about 15 minutes to under 1 minute per asset.",
-      "Wired Instagram publishing and a WhatsApp customer-service bot into n8n workflows; the bot handles about 70% of Tier-1 inquiries and cut typical response time from about 2 hours to under 3 seconds.",
+      "Built Affligen, an LLM-powered tool that turns product images into publish-ready marketing copy, reducing content preparation from about 15 minutes to under 1 minute per asset.",
+      "Connected Instagram publishing and a WhatsApp customer-service bot to n8n workflows. The bot handles about 70% of Tier-1 inquiries and reduced typical response time from about 2 hours to under 3 seconds.",
     ],
   },
   {
@@ -38,10 +38,10 @@ const experience: ExperienceItem[] = [
     org: "Tahungoding",
     period: "2024 — 2025",
     points: [
-      "Shipped the organization's company-profile portal with Next.js and Supabase, reaching a 95+ Lighthouse performance score.",
+      "Shipped the organization's portal using Next.js and Supabase, achieving a 95+ Lighthouse performance score.",
       "Consolidated three internal tools into one portal serving 100+ active SME members.",
-      "Documented technical decisions in asynchronous ADRs and coordinated a 15-person team in Linear, bringing sprint cycle time down from 14 to 10 days.",
-      "Created and taught a UI/UX engineering curriculum for 40+ university students; placed 1st (Best Mentor) among 11 instructors.",
+      "Documented technical decisions through asynchronous ADRs and coordinated a 15-person team in Linear, reducing sprint cycle time from 14 to 10 days.",
+      "Created and taught a UI/UX engineering curriculum for 40+ university students; received 1st Place (Best Mentor) among 11 instructors.",
     ],
   },
   {
@@ -49,7 +49,7 @@ const experience: ExperienceItem[] = [
     org: "Freelance · Remote",
     period: "2021 — 2024",
     points: [
-      "Built and deployed landing pages and small-business websites for clients across West Java, handling requirements, implementation, and deployment from start to finish.",
+      "Delivered landing pages and small-business websites for clients across West Java, handling requirements, implementation, and deployment from start to finish.",
     ],
   },
   {
@@ -57,12 +57,12 @@ const experience: ExperienceItem[] = [
     org: "BBPPMPV Cimahi",
     period: "Apr 2022 — Jun 2022",
     points: [
-      "Developed a Laravel booking application to replace a paper-based guesthouse reservation process: 50+ reservations per week, 80% less processing time, and no double-booking errors reported.",
+      "Developed a Laravel-based booking application to replace a paper-based guesthouse reservation process, handling 50+ reservations per week with 80% less processing time and no reported double-booking errors.",
     ],
   },
   {
     role: "Universitas Sebelas April (UNSAP)",
-    org: "B.S. in Informatics · GPA 3.90/4.00",
+    org: "B.S. in Informatics · Expected 2027 · GPA 3.90/4.00",
     period: "2023 — 2027 (expected)",
   },
   {
@@ -80,7 +80,7 @@ export default function Journey() {
   return (
     <section id="experience" className="mb-32 scroll-mt-24">
       <div className="mb-12">
-        <span className="mb-2 block font-mono text-xs uppercase tracking-wider text-zinc-500">(02) Work History</span>
+        <span className="mb-2 block font-mono text-xs uppercase tracking-wider text-zinc-500">(03) Work History</span>
         <h2 className="font-sf-pro text-4xl font-medium tracking-tight text-zinc-900 md:text-5xl"><SplitText text="Experience." /></h2>
       </div>
 

@@ -6,12 +6,12 @@ import { ArrowUpRight, Menu, X } from "lucide-react";
 
 const navLinks = [
   { name: "Experience", path: "/#experience" },
-  { name: "Portfolio", path: "/#portfolio" },
+  { name: "Selected Work", path: "/#work" },
   { name: "About", path: "/about" },
-  { name: "Projects", path: "/projects" },
+  { name: "All Projects", path: "/projects" },
 ];
 
-const CONTACT_URL = "https://wa.me/6285926270826";
+const CONTACT_URL = "#contact";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -19,7 +19,7 @@ export default function Navbar() {
   return (
     <header className="fixed inset-x-0 top-3 z-[100] px-3">
       <nav
-        className="animate-nav-in mx-auto max-w-[740px] rounded-full border border-zinc-200/70 bg-white/90 px-5 py-2 shadow-[0_2px_24px_rgba(0,0,0,0.08)] backdrop-blur-xl">
+        className="animate-nav-in mx-auto max-w-[820px] rounded-full border border-zinc-200/70 bg-white/90 px-5 py-2 shadow-[0_2px_24px_rgba(0,0,0,0.08)] backdrop-blur-xl">
         <div className="flex items-center justify-between gap-4">
           <Link
             href="/"
@@ -44,11 +44,9 @@ export default function Navbar() {
           <div className="hidden shrink-0 md:flex">
             <a
               href={CONTACT_URL}
-              target="_blank"
-              rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700"
             >
-              Let&apos;s Talk <ArrowUpRight size={14} />
+              Contact <ArrowUpRight size={14} />
             </a>
           </div>
 
@@ -75,11 +73,10 @@ export default function Navbar() {
             ))}
             <a
               href={CONTACT_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={() => setOpen(false)}
               className="mt-2 inline-flex items-center justify-center gap-1.5 rounded-full bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white"
             >
-              Let&apos;s Talk <ArrowUpRight size={14} />
+              Contact <ArrowUpRight size={14} />
             </a>
           </div>
         )}

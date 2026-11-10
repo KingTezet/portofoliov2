@@ -1,255 +1,245 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Edit3, ExternalLink, Loader2, Plus, Save, Trash2 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
-import { Upload, Trash2, Plus, Save, X, Loader2, LayoutGrid, Edit3, Image as ImgIcon, Monitor, TrendingUp, Cpu, Video, Link as LinkIcon, Briefcase, Code } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { curatedProjects } from "@/lib/projects";
+import ProjectCover from "@/components/ProjectCover";
+import { Field, inputCls, Modal, PageHeader, PrimaryButton, UploadBox } from "./ui";
 
 type Project = {
-  id: number; 
-  title: string; 
-  slug: string; 
-  category: string; 
-  description: string; 
-  thumbnail_url: string;
-  demo_url?: string;
+  id?: number;
+  title: string;
+  slug: string;
+  category: string;
+  description: string;
+  thumbnail_url: string | null;
+  tech_stack: string[] | null;
+  demo_url?: string | null;
+  repo_url?: string | null;
 };
+
+const CATEGORIES = [
+  "Product Engineering",
+  "Frontend Engineering",
+  "GovTech · Web Mapping",
+  "E-commerce · Local Business",
+  "Internal Tools",
+  "AI & Automation",
+];
+
+const empty: Project = { title: "", slug: "", category: CATEGORIES[1], description: "", thumbnail_url: null, tech_stack: [], demo_url: "", repo_url: "" };
+const curatedSlugs = new Set(curatedProjects.map((p) => p.slug));
+
+const generateSlug = (text: string) => text.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^\w-]+/g, "").replace(/-+/g, "-");
 
 export default function ProjectManager() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  
-  const [formData, setFormData] = useState<Partial<Project>>({
-    title: "", category: "Frontend", description: "", thumbnail_url: "", demo_url: ""
-  });
+  const [form, setForm] = useState<Project>(empty);
+  const [techText, setTechText] = useState("");
   const [file, setFile] = useState<File | null>(null);
 
   const fetchProjects = async () => {
-    setLoading(true);
     const { data } = await supabase.from("projects").select("*").order("id", { ascending: false });
     if (data) setProjects(data);
     setLoading(false);
   };
 
-  useEffect(() => { fetchProjects(); }, []);
+  useEffect(() => {
+    const t = setTimeout(fetchProjects, 0);
+    return () => clearTimeout(t);
+  }, []);
 
-  const handleUpload = async () => {
-    if (!file) return formData.thumbnail_url; 
-    setUploading(true);
-    const fileExt = file.name.split('.').pop();
-    const fileName = `projects/${Date.now()}.${fileExt}`;
-    
-    const { error: uploadError } = await supabase.storage.from('portfolio-assets').upload(fileName, file);
-    
-    if (uploadError) { 
-      alert(`Upload Gagal! Error: ${uploadError.message}`); 
-      setUploading(false); return null; 
-    }
-
-    const { data } = supabase.storage.from('portfolio-assets').getPublicUrl(fileName);
-    setUploading(false);
-    return data.publicUrl;
+  const open = (p: Project) => {
+    setForm(p);
+    setTechText((p.tech_stack ?? []).join(", "));
+    setFile(null);
+    setIsEditing(true);
   };
 
-  const generateSlug = (text: string) => {
-    return text.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+  const upload = async () => {
+    if (!file) return form.thumbnail_url;
+    const fileName = `projects/${Date.now()}.${file.name.split(".").pop()}`;
+    const { error } = await supabase.storage.from("portfolio-assets").upload(fileName, file);
+    if (error) {
+      alert(`Upload gagal: ${error.message}`);
+      return undefined;
+    }
+    return supabase.storage.from("portfolio-assets").getPublicUrl(fileName).data.publicUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const imageUrl = await handleUpload();
-    if (!imageUrl && !formData.thumbnail_url) return alert("Wajib ada gambar visual!");
-    
-    // Validasi link video telah dihapus karena kategori Video Editor sudah tidak ada
+    setSaving(true);
+    const imageUrl = await upload();
+    if (imageUrl === undefined) return setSaving(false);
 
-    const payload = { 
-      title: formData.title,
-      slug: formData.slug || generateSlug(formData.title || ""), 
-      category: formData.category,
-      description: formData.description,
+    const payload = {
+      title: form.title,
+      slug: form.slug || generateSlug(form.title),
+      category: form.category,
+      description: form.description,
       thumbnail_url: imageUrl,
-      demo_url: formData.demo_url,
+      tech_stack: techText.split(",").map((t) => t.trim()).filter(Boolean),
+      demo_url: form.demo_url || null,
+      repo_url: form.repo_url || null,
     };
-    
-    try {
-      if (formData.id) {
-        await supabase.from("projects").update(payload).eq("id", formData.id);
-      } else {
-        await supabase.from("projects").insert([payload]);
-      }
-      
-      setIsEditing(false); 
-      setFormData({ title: "", category: "Frontend", description: "", thumbnail_url: "", demo_url: "" }); 
-      setFile(null); 
-      fetchProjects();
 
-    } catch (error: any) {
-      alert("Gagal menyimpan data! Error: " + error.message);
-    }
+    const { error } = form.id
+      ? await supabase.from("projects").update(payload).eq("id", form.id)
+      : await supabase.from("projects").insert([payload]);
+
+    setSaving(false);
+    if (error) return alert("Gagal menyimpan: " + error.message);
+    setIsEditing(false);
+    fetchProjects();
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Hapus project ini permanen?")) return;
+  const handleDelete = async (id?: number) => {
+    if (!id || !confirm("Hapus project ini permanen?")) return;
     await supabase.from("projects").delete().eq("id", id);
     fetchProjects();
   };
 
-  // REVISI: Mengganti logika ikon agar sesuai dengan kategori Engineering yang baru
-  const getCategoryIcon = (cat: string) => {
-    if (cat === 'AI & Automation') return <TrendingUp size={14}/>;
-    if (cat === 'Full-Stack') return <Monitor size={14}/>;
-    if (cat === 'Frontend') return <Code size={14}/>;
-    return <Briefcase size={14}/>; // Fallback
-  }
+  // Curated projects (from the CV) that have no DB row yet — add one to upload a screenshot.
+  const dbSlugs = new Set(projects.map((p) => p.slug));
+  const missing = curatedProjects.filter((p) => !dbSlugs.has(p.slug));
 
   return (
-    <div className="space-y-8 p-4">
-      {/* HEADER TITANIUM STYLE */}
-      <div className="flex justify-between items-end pb-6 border-b border-white/20">
-        <div>
-          <h2 className="text-4xl font-semibold text-white tracking-tight bg-gradient-to-br from-white to-gray-400 bg-clip-text text-transparent">Projects</h2>
-          <p className="text-sm text-gray-400 mt-2 flex items-center gap-2">
-            <LayoutGrid size={14}/> Managed Portfolio • {projects.length} Items
-          </p>
-        </div>
-        <button 
-          onClick={() => { setIsEditing(true); setFormData({ category: "Frontend" }); setFile(null); }}
-          className="bg-gradient-to-b from-gray-100 to-gray-300 text-black px-6 py-3 rounded-full font-medium text-xs shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2 active:scale-95"
-        >
-          <Plus size={16} strokeWidth={2.5} /> New Project
-        </button>
-      </div>
+    <div>
+      <PageHeader
+        title="Projects"
+        subtitle={`${projects.length} di database · urutan & copy proyek utama diatur di lib/projects.ts`}
+        action={
+          <PrimaryButton onClick={() => open(empty)}>
+            <Plus size={16} /> New Project
+          </PrimaryButton>
+        }
+      />
 
-      {/* GRID LIST - GLASS CARDS */}
       {loading ? (
-        <div className="h-64 flex items-center justify-center text-gray-500 font-mono text-xs animate-pulse">SYNCING DATA...</div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-72 animate-pulse rounded-[1.75rem] bg-zinc-200/70" />
+          ))}
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
           {projects.map((item, index) => (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{delay: index*0.05}} key={item.id} 
-              className="group relative bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-[24px] overflow-hidden hover:border-white/30 transition-all duration-500 shadow-2xl hover:shadow-[0_0_30px_rgba(255,255,255,0.05)]"
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.04 }}
+              className="group overflow-hidden rounded-[1.75rem] border border-zinc-200 bg-white transition-shadow duration-500 hover:shadow-[0_24px_60px_rgba(24,24,27,0.1)]"
             >
-              <div className="h-52 overflow-hidden relative">
-                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={item.thumbnail_url} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700 ease-out" />
-                
-                {/* Hover Actions Overlay */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 backdrop-blur-[2px]">
-                  <button onClick={() => { setFormData(item); setIsEditing(true); }} className="w-10 h-10 bg-white/20 backdrop-blur-md border border-white/30 text-white rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-all hover:scale-110"><Edit3 size={16} /></button>
-                  <button onClick={() => handleDelete(item.id)} className="w-10 h-10 bg-red-500/20 backdrop-blur-md border border-red-500/30 text-red-200 rounded-full flex items-center justify-center hover:bg-red-600 hover:text-white transition-all hover:scale-110"><Trash2 size={16} /></button>
-                </div>
-
-                <div className="absolute top-4 right-4 px-3 py-1 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full flex items-center gap-2">
-                   <span className="text-gray-300">{getCategoryIcon(item.category)}</span>
-                   <span className="text-[10px] font-semibold text-white uppercase tracking-wider">{item.category}</span>
-                </div>
+              <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100">
+                <ProjectCover project={item} imgClassName="transition-transform duration-700 group-hover:scale-105" />
+                <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-900">
+                  {item.category}
+                </span>
+                {curatedSlugs.has(item.slug) && (
+                  <span
+                    title="Judul & deskripsi di situs memakai copy dari lib/projects.ts. Gambar & link diambil dari sini."
+                    className="absolute right-3 top-3 rounded-full bg-zinc-900/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white"
+                  >
+                    Curated
+                  </span>
+                )}
               </div>
-              
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-white mb-2 leading-tight truncate">{item.title}</h3>
-                <p className="text-sm text-gray-400 line-clamp-2 leading-relaxed">{item.description}</p>
+              <div className="p-5">
+                <h3 className="truncate text-lg font-semibold text-zinc-900">{item.title}</h3>
+                <p className="mt-0.5 font-mono text-[11px] text-zinc-400">/projects/{item.slug}</p>
+                <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-zinc-600">{item.description}</p>
+                <div className="mt-4 flex items-center gap-2">
+                  <button onClick={() => open(item)} className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 px-3.5 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:border-zinc-900 hover:bg-zinc-900 hover:text-white">
+                    <Edit3 size={13} /> Edit
+                  </button>
+                  <a href={`/projects/${item.slug}`} target="_blank" className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 px-3.5 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-50">
+                    <ExternalLink size={13} /> Lihat
+                  </a>
+                  <button onClick={() => handleDelete(item.id)} aria-label="Delete" className="ml-auto flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-500">
+                    <Trash2 size={15} />
+                  </button>
+                </div>
               </div>
             </motion.div>
           ))}
         </div>
       )}
 
-      {/* MODAL FORM - TITANIUM SHEET */}
-      <AnimatePresence>
-        {isEditing && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsEditing(false)} className="absolute inset-0 bg-black/60 backdrop-blur-lg" />
-            
-            <motion.div initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }} 
-              className="w-full max-w-2xl bg-[#1c1c1e] border border-white/10 rounded-[32px] p-8 shadow-2xl relative z-10 overflow-hidden ring-1 ring-white/10"
-            >
-              {/* Glossy Header Effect */}
-              <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
-
-              <div className="flex justify-between items-center mb-8 relative z-10">
-                <h3 className="text-2xl font-semibold text-white tracking-tight">
-                  {formData.id ? "Edit Project" : "New Project"}
-                </h3>
-                <button onClick={() => setIsEditing(false)} className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:bg-white/20 hover:text-white transition-all"><X size={18}/></button>
-              </div>
-
-              <form onSubmit={handleSubmit} className="flex flex-col gap-6 relative z-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-xs font-medium text-gray-400 ml-1">Project Title</label>
-                    <input type="text" className="w-full bg-black/20 border border-white/10 rounded-2xl px-4 py-3 text-white text-sm focus:border-white/30 focus:bg-black/40 focus:outline-none transition-all" 
-                      placeholder="Project Name" value={formData.title || ""} onChange={e => setFormData({...formData, title: e.target.value})} required />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-medium text-gray-400 ml-1">Category</label>
-                    <div className="relative">
-                      {/* REVISI: Opsi dropdown disesuaikan dengan 4 pilar Engineering */}
-                      <select className="w-full bg-black/20 border border-white/10 rounded-2xl px-4 py-3 text-white text-sm focus:border-white/30 focus:bg-black/40 focus:outline-none appearance-none transition-all cursor-pointer"
-                        value={formData.category || "Frontend"} onChange={e => setFormData({...formData, category: e.target.value})}>
-                        <option value="Full-Stack">Full-Stack</option>
-                        <option value="AI & Automation">AI & Automation</option>
-                        <option value="Frontend">Frontend</option>
-                        <option value="Backend">Backend</option>
-                      </select>
-                      <LayoutGrid size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"/>
-                    </div>
-                  </div>
-                </div>
-
-                {/* REVISI: Blok input URL untuk Video Editor dihapus karena sudah tidak relevan */}
-                
-                {/* TAMBAHAN: Input URL opsional untuk Live Demo / GitHub Repo */}
-                <div className="space-y-2">
-                    <label className="text-xs font-medium text-gray-400 ml-1 flex items-center gap-2">
-                        <LinkIcon size={14}/> Live Demo / GitHub URL (Optional)
-                    </label>
-                    <input 
-                        type="url" 
-                        className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-white/30 focus:bg-black/40 focus:outline-none transition-all" 
-                        placeholder="https://..." 
-                        value={formData.demo_url || ""} 
-                        onChange={e => setFormData({...formData, demo_url: e.target.value})} 
-                    />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-400 ml-1">Description</label>
-                  <textarea rows={4} className="w-full bg-black/20 border border-white/10 rounded-2xl px-4 py-3 text-white text-sm focus:border-white/30 focus:bg-black/40 focus:outline-none transition-all resize-none"
-                    placeholder="Describe the project..." value={formData.description || ""} onChange={e => setFormData({...formData, description: e.target.value})} required />
-                </div>
-
-                {/* Upload Area Titanium */}
-                <div className="p-6 rounded-2xl border border-dashed border-white/20 bg-white/[0.02] hover:bg-white/[0.05] transition-all relative group text-center cursor-pointer">
-                  <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-20" onChange={e => setFile(e.target.files?.[0] || null)} />
-                  <div className="flex flex-col items-center gap-3">
-                    {file || formData.thumbnail_url ? (
-                      <div className="text-green-400 flex items-center gap-2 text-sm font-medium">
-                        <ImgIcon size={20}/> 
-                        {file ? "New Image Selected" : "Current Image Loaded"}
-                      </div>
-                    ) : (
-                      <>
-                        <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-all">
-                            <Upload size={20} className="text-gray-400 group-hover:text-white transition-colors"/>
-                        </div>
-                        <span className="text-sm font-medium text-gray-400 group-hover:text-white">Click to Upload Visual</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                <button type="submit" disabled={uploading} className="mt-2 w-full bg-white text-black py-4 rounded-2xl font-semibold text-sm hover:bg-gray-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50">
-                  {uploading ? <Loader2 className="animate-spin" size={18}/> : <Save size={18}/>} 
-                  {uploading ? "Uploading..." : "Save Changes"}
-                </button>
-              </form>
-            </motion.div>
+      {!loading && missing.length > 0 && (
+        <div className="mt-12">
+          <h3 className="mb-1 text-sm font-semibold text-zinc-900">Proyek dari CV yang belum punya screenshot</h3>
+          <p className="mb-4 text-sm text-zinc-500">
+            Tampil di situs dengan cover teks. Tambahkan ke database untuk upload screenshot yang aman dipublikasikan.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {missing.map((p) => (
+              <button
+                key={p.slug}
+                onClick={() =>
+                  open({ ...empty, title: p.title, slug: p.slug, category: p.category, description: p.summary, tech_stack: p.tags, demo_url: p.demo_url ?? "" })
+                }
+                className="inline-flex items-center gap-2 rounded-full border border-dashed border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:border-zinc-900 hover:text-zinc-900"
+              >
+                <Plus size={14} /> {p.title.split(" — ")[0]}
+              </button>
+            ))}
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
+
+      <Modal open={isEditing} onClose={() => setIsEditing(false)} title={form.id ? "Edit Project" : "New Project"} wide>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {curatedSlugs.has(form.slug) && (
+            <p className="rounded-2xl bg-zinc-100 px-4 py-3 text-xs leading-relaxed text-zinc-600">
+              Proyek curated: judul, deskripsi, dan case study di situs diambil dari <code className="font-mono">lib/projects.ts</code>.
+              Screenshot, live URL, dan repo URL dari form ini tetap dipakai.
+            </p>
+          )}
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <Field label="Judul">
+              <input className={inputCls} placeholder="Nama Proyek — Jenis Produk" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required />
+            </Field>
+            <Field label="Kategori">
+              <select className={`${inputCls} cursor-pointer`} value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                {[...new Set([...CATEGORIES, form.category])].map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          </div>
+          <Field label="Slug" hint="Kosongkan untuk dibuat otomatis dari judul.">
+            <input className={`${inputCls} font-mono`} placeholder="nama-proyek" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+          </Field>
+          <Field label="Deskripsi singkat" hint="1–2 kalimat lengkap: konteks + kontribusi + hasil. Jangan dipotong.">
+            <textarea rows={3} className={`${inputCls} resize-none`} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} required />
+          </Field>
+          <Field label="Tech stack" hint="Pisahkan dengan koma.">
+            <input className={inputCls} placeholder="Next.js, TypeScript, Supabase" value={techText} onChange={(e) => setTechText(e.target.value)} />
+          </Field>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <Field label="Live URL (opsional)">
+              <input type="url" className={inputCls} placeholder="https://" value={form.demo_url ?? ""} onChange={(e) => setForm({ ...form, demo_url: e.target.value })} />
+            </Field>
+            <Field label="Repo URL (opsional)">
+              <input type="url" className={inputCls} placeholder="https://github.com/…" value={form.repo_url ?? ""} onChange={(e) => setForm({ ...form, repo_url: e.target.value })} />
+            </Field>
+          </div>
+          <UploadBox label="Klik untuk upload screenshot" onFile={setFile} fileName={file?.name} hasCurrent={!!form.thumbnail_url} />
+          <PrimaryButton type="submit" disabled={saving} className="w-full py-3.5">
+            {saving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+            {saving ? "Menyimpan…" : "Simpan"}
+          </PrimaryButton>
+        </form>
+      </Modal>
     </div>
   );
 }

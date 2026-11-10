@@ -4,7 +4,6 @@ import Projects from "@/components/Projects";
 import Journey from "@/components/Journey";
 import AboutPreview from "@/components/AboutPreview";
 import Services from "@/components/Services";
-import ClaimReward from "@/components/ClaimReward";
 
 export default function Home() {
   return (
@@ -15,11 +14,10 @@ export default function Home() {
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Projects />
           <Journey />
-          <AboutPreview />
           <Services />
+          <AboutPreview />
         </main>
       </div>
-      <ClaimReward />
     </>
   );
 }

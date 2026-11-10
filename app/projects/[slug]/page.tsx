@@ -1,27 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowLeft, Calendar, Code2, ExternalLink, Github, Layers, Play, Video } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { ArrowLeft, ArrowUpRight, CheckCircle2, Code2, ExternalLink, Github, Layers, Target, TrendingUp, User, Wrench } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Reveal, SplitText } from "@/components/motion";
+import ProjectCover, { useProjects } from "@/components/ProjectCover";
+import type { ProjectEntry } from "@/lib/projects";
 
-type Project = {
-  id: number;
-  title: string;
-  description: string;
-  thumbnail_url: string | null;
-  tech_stack: string[];
-  demo_url?: string;
-  repo_url?: string;
-  category: string;
-  created_at: string;
-};
-
-function Cover({ src, alt }: { src: string | null; alt: string }) {
+function Cover({ project }: { project: ProjectEntry }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
@@ -35,35 +24,44 @@ function Cover({ src, alt }: { src: string | null; alt: string }) {
       transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
       className="relative mb-12 aspect-video w-full overflow-hidden rounded-[2rem] bg-zinc-200 md:aspect-[21/9]"
     >
-      {src && (
-        <motion.img
-          style={{ y, scale }}
-          src={src}
-          alt={alt}
-          className="absolute inset-0 h-full w-full object-cover will-change-transform"
-        />
-      )}
+      <motion.div style={{ y, scale }} className="absolute inset-0 will-change-transform">
+        <ProjectCover project={project} />
+      </motion.div>
     </motion.div>
+  );
+}
+
+function Block({ icon: Icon, title, children, delay = 0 }: { icon: typeof Layers; title: string; children: React.ReactNode; delay?: number }) {
+  return (
+    <Reveal delay={delay}>
+      <h3 className="mb-4 flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-zinc-500">
+        <Icon size={14} /> {title}
+      </h3>
+      {children}
+    </Reveal>
+  );
+}
+
+function List({ items }: { items: string[] }) {
+  return (
+    <ul className="space-y-3">
+      {items.map((t) => (
+        <li key={t} className="flex gap-3 text-base leading-relaxed text-zinc-700">
+          <CheckCircle2 size={18} className="mt-1 shrink-0 text-zinc-400" />
+          {t}
+        </li>
+      ))}
+    </ul>
   );
 }
 
 export default function ProjectDetail() {
   const { slug } = useParams();
-  const [project, setProject] = useState<Project | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { projects, ready } = useProjects();
+  const project = projects.find((p) => p.slug === slug);
+  const others = projects.filter((p) => p.slug !== slug && p.featured).slice(0, 2);
 
-  useEffect(() => {
-    async function fetchProject() {
-      if (!slug) return;
-      const { data, error } = await supabase.from("projects").select("*").eq("slug", slug).single();
-      if (error) console.error("Error fetching project:", error);
-      else setProject(data);
-      setLoading(false);
-    }
-    fetchProject();
-  }, [slug]);
-
-  if (loading)
+  if (!project && !ready)
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#fcfbfa]">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-200 border-t-zinc-900" />
@@ -75,12 +73,12 @@ export default function ProjectDetail() {
       <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#fcfbfa] text-zinc-900">
         <p className="font-sf-pro text-3xl font-medium">Project not found.</p>
         <Link href="/projects" className="rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white">
-          Back to Projects
+          Back to All Projects
         </Link>
       </main>
     );
 
-  const isVideo = project.category === "Editor Video";
+  const cs = project.caseStudy;
 
   return (
     <main className="min-h-screen bg-[#fcfbfa] pb-24 text-zinc-900 selection:bg-zinc-900 selection:text-white">
@@ -89,22 +87,19 @@ export default function ProjectDetail() {
       <div className="mx-auto max-w-7xl px-4 pt-28 sm:px-6 lg:px-8">
         <Reveal y={10}>
           <Link href="/projects" className="group mb-8 inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900">
-            <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" /> Back to Projects
+            <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" /> Back to All Projects
           </Link>
         </Reveal>
 
-        <Cover src={project.thumbnail_url} alt={project.title} />
+        <Cover project={project} />
 
         <div className="mx-auto max-w-5xl">
           <Reveal>
-            <div className="mb-4 flex items-center gap-3">
+            <div className="mb-4 flex flex-wrap items-center gap-3">
               <span className="rounded-full bg-zinc-900 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white">
                 {project.category}
               </span>
-              <span className="flex items-center gap-2 font-mono text-xs text-zinc-500">
-                <Calendar size={12} />
-                {new Date(project.created_at).toLocaleDateString("id-ID", { year: "numeric", month: "long" })}
-              </span>
+              {project.context && <span className="text-sm text-zinc-500">{project.context}</span>}
             </div>
           </Reveal>
 
@@ -114,14 +109,9 @@ export default function ProjectDetail() {
 
           <Reveal delay={0.1}>
             <div className="mb-12 flex flex-wrap gap-3">
-              {isVideo && project.demo_url && (
+              {project.demo_url && (
                 <a href={project.demo_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:scale-[1.03] hover:bg-zinc-800">
-                  <Play size={16} fill="currentColor" /> Watch Video
-                </a>
-              )}
-              {!isVideo && project.demo_url && (
-                <a href={project.demo_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:scale-[1.03] hover:bg-zinc-800">
-                  <ExternalLink size={16} /> Live Demo
+                  <ExternalLink size={16} /> Visit Live Site
                 </a>
               )}
               {project.repo_url && (
@@ -133,36 +123,65 @@ export default function ProjectDetail() {
           </Reveal>
 
           <div className="grid grid-cols-1 gap-12 border-t border-zinc-200 pt-12 md:grid-cols-3">
-            <Reveal className="md:col-span-2">
-              <h3 className="mb-4 flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-zinc-500">
-                <Layers size={14} /> About Project
-              </h3>
-              <p className="whitespace-pre-wrap text-lg leading-relaxed text-zinc-700">{project.description}</p>
-            </Reveal>
+            <div className="space-y-12 md:col-span-2">
+              <Block icon={Layers} title="Overview">
+                <p className="text-lg leading-relaxed text-zinc-700">{cs?.overview ?? project.summary}</p>
+              </Block>
+              {cs?.challenge && (
+                <Block icon={Target} title="The Challenge">
+                  <p className="text-lg leading-relaxed text-zinc-700">{cs.challenge}</p>
+                </Block>
+              )}
+              {cs?.built && (
+                <Block icon={Wrench} title="What I Built">
+                  <List items={cs.built} />
+                </Block>
+              )}
+              {cs?.outcome && (
+                <Block icon={TrendingUp} title="The Outcome">
+                  <div className="rounded-3xl border border-zinc-200 bg-white p-6 sm:p-8">
+                    <List items={cs.outcome} />
+                  </div>
+                </Block>
+              )}
+            </div>
 
-            <Reveal delay={0.1} className="space-y-8">
-              <div>
-                <h3 className="mb-4 flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-zinc-500">
-                  <Code2 size={14} /> Tech Stack
-                </h3>
+            <div className="space-y-10">
+              {cs?.role && (
+                <Block icon={User} title="My Role" delay={0.1}>
+                  <p className="text-base leading-relaxed text-zinc-700">{cs.role}</p>
+                </Block>
+              )}
+              <Block icon={Code2} title="Tech Stack" delay={0.15}>
                 <div className="flex flex-wrap gap-2">
-                  {project.tech_stack?.map((tech) => (
+                  {project.tags.map((tech) => (
                     <span key={tech} className="rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 transition-all duration-300 hover:border-zinc-900 hover:bg-zinc-900 hover:text-white">
                       {tech}
                     </span>
                   ))}
                 </div>
-              </div>
-
-              {isVideo && (
-                <div className="rounded-3xl border border-zinc-200 bg-white p-6">
-                  <Video className="mb-2 text-zinc-900" size={24} />
-                  <h4 className="mb-1 font-semibold">Video Production</h4>
-                  <p className="text-xs text-zinc-500">Project ini melibatkan proses editing, color grading, dan sound design profesional.</p>
-                </div>
-              )}
-            </Reveal>
+              </Block>
+            </div>
           </div>
+
+          {others.length > 0 && (
+            <div className="mt-24 border-t border-zinc-200 pt-12">
+              <h3 className="mb-6 font-mono text-xs uppercase tracking-wider text-zinc-500">More Selected Work</h3>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                {others.map((o) => (
+                  <Link key={o.slug} href={`/projects/${o.slug}`} className="group overflow-hidden rounded-3xl border border-zinc-200 bg-white transition-shadow duration-500 hover:shadow-[0_24px_70px_rgba(24,24,27,0.12)]">
+                    <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100">
+                      <ProjectCover project={o} imgClassName="transition-transform duration-700 group-hover:scale-105" />
+                    </div>
+                    <div className="flex items-center justify-between gap-3 p-5">
+                      <p className="font-medium text-zinc-900">{o.title}</p>
+                      <ArrowUpRight size={18} className="shrink-0 text-zinc-400 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-zinc-900" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </main>
