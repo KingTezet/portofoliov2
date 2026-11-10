@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, ImageOff } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { Reveal, SplitText, Tilt } from "@/components/motion";
 
 type Project = {
   id: number;
@@ -39,7 +40,7 @@ export default function Projects() {
       <div className="mb-10 flex items-end justify-between">
         <div>
           <span className="mb-2 block font-mono text-xs uppercase tracking-wider text-zinc-500">(01) Recent Work</span>
-          <h2 className="font-sf-pro text-4xl font-medium tracking-tight text-zinc-900 md:text-5xl">My Portfolio.</h2>
+          <h2 className="font-sf-pro text-4xl font-medium tracking-tight text-zinc-900 md:text-5xl"><SplitText text="My Portfolio." /></h2>
         </div>
         <Link
           href="/projects"
@@ -50,18 +51,19 @@ export default function Projects() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {projects.map((project) => {
+        {projects.map((project, idx) => {
           const external = project.category === "Editor Video";
           const href = external ? project.demo_url || "#" : `/projects/${project.slug}`;
           const tags = (project.tech_stack || []).slice(0, 3);
 
           return (
+            <Reveal key={project.id} delay={(idx % 3) * 0.1}>
+            <Tilt max={4}>
             <Link
-              key={project.id}
               href={href}
               target={external ? "_blank" : undefined}
               rel={external ? "noopener noreferrer" : undefined}
-              className="group relative block aspect-[16/10] cursor-pointer overflow-hidden rounded-2xl bg-zinc-200"
+              className="group relative block aspect-[16/10] cursor-pointer overflow-hidden rounded-2xl bg-zinc-200 shadow-sm transition-shadow duration-500 hover:shadow-[0_24px_60px_rgba(24,24,27,0.18)]"
             >
               <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-400">
                 <ImageOff size={24} className="mb-2" />
@@ -102,6 +104,8 @@ export default function Projects() {
                 </div>
               </div>
             </Link>
+            </Tilt>
+            </Reveal>
           );
         })}
       </div>

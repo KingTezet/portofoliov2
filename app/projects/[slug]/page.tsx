@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
-import { ArrowLeft, Github, ExternalLink, Calendar, Code2, Layers, Play, Video } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowLeft, Calendar, Code2, ExternalLink, Github, Layers, Play, Video } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 import Navbar from "@/components/Navbar";
+import { Reveal, SplitText } from "@/components/motion";
 
-// --- TIPE DATA ---
 type Project = {
   id: number;
   title: string;
@@ -20,6 +21,32 @@ type Project = {
   created_at: string;
 };
 
+function Cover({ src, alt }: { src: string | null; alt: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+      className="relative mb-12 aspect-video w-full overflow-hidden rounded-[2rem] bg-zinc-200 md:aspect-[21/9]"
+    >
+      {src && (
+        <motion.img
+          style={{ y, scale }}
+          src={src}
+          alt={alt}
+          className="absolute inset-0 h-full w-full object-cover will-change-transform"
+        />
+      )}
+    </motion.div>
+  );
+}
+
 export default function ProjectDetail() {
   const { slug } = useParams();
   const [project, setProject] = useState<Project | null>(null);
@@ -28,12 +55,7 @@ export default function ProjectDetail() {
   useEffect(() => {
     async function fetchProject() {
       if (!slug) return;
-      const { data, error } = await supabase
-        .from("projects")
-        .select("*")
-        .eq("slug", slug)
-        .single();
-
+      const { data, error } = await supabase.from("projects").select("*").eq("slug", slug).single();
       if (error) console.error("Error fetching project:", error);
       else setProject(data);
       setLoading(false);
@@ -41,110 +63,107 @@ export default function ProjectDetail() {
     fetchProject();
   }, [slug]);
 
-  if (loading) return <div className="min-h-screen bg-[#050505] flex items-center justify-center text-white font-mono text-xs animate-pulse">LOADING DATA...</div>;
-  if (!project) return <div className="min-h-screen bg-[#050505] flex items-center justify-center text-white">Project Not Found</div>;
+  if (loading)
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#fcfbfa]">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-200 border-t-zinc-900" />
+      </main>
+    );
+
+  if (!project)
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#fcfbfa] text-zinc-900">
+        <p className="font-sf-pro text-3xl font-medium">Project not found.</p>
+        <Link href="/projects" className="rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white">
+          Back to Projects
+        </Link>
+      </main>
+    );
 
   const isVideo = project.category === "Editor Video";
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white selection:bg-blue-500/30 pb-20">
+    <main className="min-h-screen bg-[#fcfbfa] pb-24 text-zinc-900 selection:bg-zinc-900 selection:text-white">
       <Navbar />
-      
-      {/* HEADER IMAGE / VIDEO THUMBNAIL */}
-      <div className="relative w-full h-[50vh] md:h-[60vh] bg-[#0a0a0a] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10" />
-        
-        {/* Tombol Back */}
-        <Link href="/projects" className="absolute top-28 left-6 md:left-20 z-50 flex items-center gap-2 text-white/50 hover:text-white transition-colors bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/5 text-xs font-bold uppercase tracking-widest">
-            <ArrowLeft size={14} /> Back to Projects
-        </Link>
 
-        {project.thumbnail_url && (
-            <img src={project.thumbnail_url} alt={project.title} className="w-full h-full object-cover opacity-60" />
-        )}
-      </div>
+      <div className="mx-auto max-w-7xl px-4 pt-28 sm:px-6 lg:px-8">
+        <Reveal y={10}>
+          <Link href="/projects" className="group mb-8 inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900">
+            <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" /> Back to Projects
+          </Link>
+        </Reveal>
 
-      <div className="max-w-4xl mx-auto px-6 -mt-32 relative z-20">
-        
-        {/* TITLE SECTION */}
-        <div className="mb-10">
-            <div className="flex items-center gap-3 mb-4">
-                <span className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-bold uppercase tracking-widest">
-                    {project.category}
-                </span>
-                <span className="text-gray-500 text-xs font-mono flex items-center gap-2">
-                    <Calendar size={12}/> {new Date(project.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long' })}
-                </span>
+        <Cover src={project.thumbnail_url} alt={project.title} />
+
+        <div className="mx-auto max-w-5xl">
+          <Reveal>
+            <div className="mb-4 flex items-center gap-3">
+              <span className="rounded-full bg-zinc-900 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white">
+                {project.category}
+              </span>
+              <span className="flex items-center gap-2 font-mono text-xs text-zinc-500">
+                <Calendar size={12} />
+                {new Date(project.created_at).toLocaleDateString("id-ID", { year: "numeric", month: "long" })}
+              </span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-black text-white leading-tight mb-6">{project.title}</h1>
-            
-            {/* --- ACTION BUTTONS (Logic Titanium) --- */}
-            <div className="flex flex-wrap gap-4">
-                {/* 1. TOMBOL UTAMA: VIDEO LINK */}
-                {isVideo && project.demo_url && (
-                    <a 
-                        href={project.demo_url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="flex-1 md:flex-none px-8 py-4 bg-white text-black rounded-xl font-black text-xs uppercase tracking-[0.2em] hover:bg-blue-50 hover:scale-105 transition-all shadow-[0_0_30px_rgba(255,255,255,0.3)] flex items-center justify-center gap-3"
-                    >
-                        <Play size={18} fill="currentColor"/> Watch Video
-                    </a>
-                )}
+          </Reveal>
 
-                {/* 2. TOMBOL DEMO (Untuk Web/App) */}
-                {!isVideo && project.demo_url && (
-                    <a href={project.demo_url} target="_blank" className="flex-1 md:flex-none px-6 py-3 bg-white text-black rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-gray-200 transition flex items-center justify-center gap-2">
-                        <ExternalLink size={16}/> Live Demo
-                    </a>
-                )}
-                
-                {/* 3. TOMBOL REPO (Github) */}
-                {project.repo_url && (
-                    <a href={project.repo_url} target="_blank" className="px-6 py-3 bg-white/5 border border-white/10 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-white/10 transition flex items-center gap-2">
-                        <Github size={18}/> Source Code
-                    </a>
-                )}
+          <h1 className="font-sf-pro mb-8 text-4xl font-medium leading-tight tracking-tight md:text-6xl">
+            <SplitText text={project.title} />
+          </h1>
+
+          <Reveal delay={0.1}>
+            <div className="mb-12 flex flex-wrap gap-3">
+              {isVideo && project.demo_url && (
+                <a href={project.demo_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:scale-[1.03] hover:bg-zinc-800">
+                  <Play size={16} fill="currentColor" /> Watch Video
+                </a>
+              )}
+              {!isVideo && project.demo_url && (
+                <a href={project.demo_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:scale-[1.03] hover:bg-zinc-800">
+                  <ExternalLink size={16} /> Live Demo
+                </a>
+              )}
+              {project.repo_url && (
+                <a href={project.repo_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-6 py-3 text-sm font-medium text-zinc-900 transition-all duration-300 hover:-translate-y-0.5 hover:bg-zinc-50">
+                  <Github size={16} /> Source Code
+                </a>
+              )}
             </div>
-        </div>
+          </Reveal>
 
-        {/* CONTENT GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 border-t border-white/10 pt-12">
-            
-            {/* Kolom Kiri: Deskripsi */}
-            <div className="md:col-span-2 space-y-8">
-                <div>
-                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2"><Layers size={14}/> About Project</h3>
-                    <p className="text-gray-300 leading-relaxed font-light text-lg whitespace-pre-wrap">
-                        {project.description}
-                    </p>
+          <div className="grid grid-cols-1 gap-12 border-t border-zinc-200 pt-12 md:grid-cols-3">
+            <Reveal className="md:col-span-2">
+              <h3 className="mb-4 flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-zinc-500">
+                <Layers size={14} /> About Project
+              </h3>
+              <p className="whitespace-pre-wrap text-lg leading-relaxed text-zinc-700">{project.description}</p>
+            </Reveal>
+
+            <Reveal delay={0.1} className="space-y-8">
+              <div>
+                <h3 className="mb-4 flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-zinc-500">
+                  <Code2 size={14} /> Tech Stack
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {project.tech_stack?.map((tech) => (
+                    <span key={tech} className="rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 transition-all duration-300 hover:border-zinc-900 hover:bg-zinc-900 hover:text-white">
+                      {tech}
+                    </span>
+                  ))}
                 </div>
-            </div>
+              </div>
 
-            {/* Kolom Kanan: Tech Stack & Info */}
-            <div className="space-y-8">
-                <div>
-                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2"><Code2 size={14}/> Tech Stack</h3>
-                    <div className="flex flex-wrap gap-2">
-                        {project.tech_stack?.map((tech) => (
-                            <span key={tech} className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-gray-300 font-medium">
-                                {tech}
-                            </span>
-                        ))}
-                    </div>
+              {isVideo && (
+                <div className="rounded-3xl border border-zinc-200 bg-white p-6">
+                  <Video className="mb-2 text-zinc-900" size={24} />
+                  <h4 className="mb-1 font-semibold">Video Production</h4>
+                  <p className="text-xs text-zinc-500">Project ini melibatkan proses editing, color grading, dan sound design profesional.</p>
                 </div>
-
-                {/* Banner Tambahan untuk Video Editor */}
-                {isVideo && (
-                    <div className="p-6 rounded-2xl bg-blue-500/5 border border-blue-500/20">
-                        <Video className="text-blue-400 mb-2" size={24} />
-                        <h4 className="text-white font-bold mb-1">Video Production</h4>
-                        <p className="text-xs text-gray-400">Project ini melibatkan proses editing, color grading, dan sound design profesional.</p>
-                    </div>
-                )}
-            </div>
+              )}
+            </Reveal>
+          </div>
         </div>
-
       </div>
     </main>
   );

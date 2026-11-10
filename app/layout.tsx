@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Shantell_Sans, Bebas_Neue } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
+import { MotionProvider, ScrollProgress } from "@/components/motion";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -21,9 +22,9 @@ const bebas = Bebas_Neue({
 });
 
 export const metadata: Metadata = {
-  title: "Moch. Sugih Nugraha | Product Engineer",
+  title: "Moch Sugih Nugraha | Frontend Engineer",
   description:
-    "Product Engineer, Full-Stack (Next.js) & AI Automation Specialist building highly autonomous and reliable digital products.",
+    "Frontend Engineer building fast, accessible web interfaces with React, Next.js, TypeScript and Tailwind CSS.",
   icons: {
     icon: [
       {
@@ -47,8 +48,11 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${shantell.variable} ${bebas.variable} font-sans bg-[#f5f5f4] text-zinc-900 antialiased`}
       >
-        {children}
-        <Footer />
+        <MotionProvider>
+          <ScrollProgress />
+          {children}
+          <Footer />
+        </MotionProvider>
       </body>
     </html>
   );

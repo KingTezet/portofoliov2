@@ -2,19 +2,19 @@
 
 import Navbar from "@/components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, MapPin, Zap, RefreshCcw, Fingerprint, ScanFace, Lock, Sparkles, Activity } from "lucide-react";
+import { Users, MapPin, Zap, RefreshCcw, Fingerprint, ScanFace, Lock, Sparkles, Award, GraduationCap, BookOpen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { CountUp, Parallax, Reveal, SplitText } from "@/components/motion";
 
 // --- DATA NETWORK ---
 const network = [
-  { name: "Mick Alexandro", role: "Machine Trader", img: "https://ui-avatars.com/api/?name=Mick+Alexandra&background=0D8ABC&color=fff" },
-  { name: "Evans Alexander", role: "Profesional Trader", img: "https://ui-avatars.com/api/?name=Evans+Alexander&background=0D8ABC&color=fff" },
+  { name: "Mick Alexandro", role: "Machine Trader", img: "https://ui-avatars.com/api/?name=Mick+Alexandra&background=18181b&color=fff" },
+  { name: "Evans Alexander", role: "Profesional Trader", img: "https://ui-avatars.com/api/?name=Evans+Alexander&background=18181b&color=fff" },
   { name: "Dwi Rangga", role: "Investor Crypto", img: "https://ui-avatars.com/api/?name=Dwi+Rangga&background=random" },
   { name: "Pradisa Fadzra", role: "Analyst & Comm. Mgr", img: "https://ui-avatars.com/api/?name=Pradisa+Fadzra&background=random" },
   { name: "Bangkit Nugraha", role: "Founder Tradting", img: "https://ui-avatars.com/api/?name=Bangkit+Nugraha&background=random" },
   { name: "Ricky Pauji", role: "Co-Founder Tradting", img: "https://ui-avatars.com/api/?name=Ricky+Pauji&background=random" },
-  // --- New Additions ---
   { name: "Fathoni Mahardika S.Kom., M.T. ", role: "IT Lecturer", img: "https://ui-avatars.com/api/?name=Fathoni+Mahardika&background=random" },
   { name: "M Iqbal Rivaldi", role: "Founder Tahungoding", img: "https://ui-avatars.com/api/?name=M+Iqbal+Rivaldi&background=random" },
   { name: "Krisna Purnama", role: "Fullstack Engineer", img: "https://ui-avatars.com/api/?name=Krisna+Purnama&background=random" },
@@ -29,26 +29,22 @@ type GalleryItem = {
 };
 
 const categories = ["All", "Network", "Travel", "Life", "Work", "Certificate"];
-const skills = [
-  "Frontend Architecture",
-  "Backend & Cloud",
-  "AI & Automation",
-  "UI/UX Engineering",
-  "Full-Stack Development",
-  "Data Analytics"
+
+const skillGroups = [
+  { label: "Frontend", items: ["React", "Next.js (App Router)", "TypeScript", "JavaScript", "HTML", "CSS", "Tailwind CSS"] },
+  { label: "Data & APIs", items: ["REST APIs", "Supabase", "PostgreSQL", "SQL", "Webhooks"] },
+  { label: "Backend (supporting)", items: ["Node.js", "PHP", "Laravel"] },
+  { label: "Tooling", items: ["Git/GitHub", "Vercel", "Docker", "CI/CD", "Linear", "n8n", "LLM API integration"] },
 ];
 
-// --- TITANIUM ANIMATION VARIANTS (SUDAH DIPERBAIKI DENGAN "as const") ---
-const titaniumTextVariant = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { 
-        opacity: 1, 
-        y: 0,
-        transition: { duration: 1, ease: [0.22, 1, 0.36, 1] as const } // <--- INI KUNCI BIAR VERCEL GAK ERROR
-    }
-};
+const highlights = [
+  { icon: Award, title: "Awards", text: "1st Place (2024) and 2nd Place (2025), University Innovation Challenge." },
+  { icon: BookOpen, title: "Research", text: "Co-authored a usability analysis of the MPP Sumedang app (Jakob Nielsen model, PLS-SEM)." },
+  { icon: Sparkles, title: "Certifications", text: "Google Cloud LLM & Generative AI; Google Cloud Computing & ML (8 badges)." },
+  { icon: GraduationCap, title: "Education", text: "B.S. Informatics, Universitas Sebelas April (UNSAP) — GPA 3.90/4.00, 2023–2027." },
+];
 
-// --- GAME COMPONENT: PROXIMITY SCANNER (SMART LOGIC V3 - STRICT MODE) ---
+// --- GAME COMPONENT: PROXIMITY SCANNER ---
 function ProximityScanner() {
     const [name, setName] = useState("");
     const [status, setStatus] = useState<"idle" | "scanning" | "result">("idle");
@@ -140,44 +136,38 @@ function ProximityScanner() {
     };
 
     return (
-        <div className="relative w-full max-w-md mx-auto mt-10">
-            {/* Main Container - SILVER TITANIUM */}
-            <div className="relative overflow-hidden rounded-[2rem] bg-[#030303] border border-white/10 shadow-[0_0_40px_-10px_rgba(255,255,255,0.05)] min-h-[300px] flex flex-col items-center justify-center p-8 transition-all duration-500 hover:border-white/20">
-                
-                {/* Subtle Ambient Light - SILVER */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent blur-sm" />
-
+        <div className="relative mx-auto mt-10 w-full max-w-md">
+            <div className="relative flex min-h-[300px] flex-col items-center justify-center overflow-hidden rounded-[2rem] border border-zinc-200 bg-white p-8 shadow-[0_18px_60px_rgba(24,24,27,0.06)] transition-all duration-500 hover:shadow-[0_24px_70px_rgba(24,24,27,0.1)]">
                 <AnimatePresence mode="wait">
-                    {/* STATE 1: IDLE */}
                     {status === "idle" && (
-                        <motion.div 
+                        <motion.div
                             key="idle"
-                            initial={{ opacity: 0, scale: 0.98 }} 
-                            animate={{ opacity: 1, scale: 1 }} 
+                            initial={{ opacity: 0, scale: 0.98 }}
+                            animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.98 }}
-                            className="relative z-10 w-full flex flex-col items-center space-y-8"
+                            className="relative z-10 flex w-full flex-col items-center space-y-8"
                         >
                             <div className="flex flex-col items-center gap-4">
-                                <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 shadow-inner">
-                                    <ScanFace size={32} className="text-white/80" />
+                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-zinc-900 text-white">
+                                    <ScanFace size={32} />
                                 </div>
-                                <h3 className="text-xs font-bold text-gray-400 tracking-[0.3em] uppercase">Frequency Check</h3>
+                                <h3 className="font-mono text-xs uppercase tracking-[0.3em] text-zinc-500">Frequency Check</h3>
                             </div>
 
                             <div className="w-full space-y-4">
-                                <input 
-                                    type="text" 
-                                    placeholder="Enter Identity..." 
+                                <input
+                                    type="text"
+                                    placeholder="Enter Identity..."
                                     suppressHydrationWarning={true}
-                                    value={name} 
-                                    onChange={(e) => setName(e.target.value)} 
-                                    onKeyDown={(e) => e.key === "Enter" && handleScan()} 
-                                    className="w-full bg-[#0a0a0a] border border-white/10 rounded-full px-6 py-4 text-center text-white placeholder-gray-700 outline-none focus:border-white/30 focus:bg-[#0f0f0f] transition-all font-mono uppercase tracking-widest text-xs shadow-inner" 
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    onKeyDown={(e) => e.key === "Enter" && handleScan()}
+                                    className="w-full rounded-full border border-zinc-200 bg-zinc-50 px-6 py-4 text-center font-mono text-xs uppercase tracking-widest text-zinc-900 outline-none transition-all placeholder:text-zinc-400 focus:border-zinc-900 focus:bg-white"
                                 />
-                                <button 
-                                    onClick={handleScan} 
-                                    disabled={!name.trim()} 
-                                    className="w-full py-4 bg-white text-black font-bold text-[10px] tracking-[0.2em] uppercase rounded-full hover:bg-gray-200 active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+                                <button
+                                    onClick={handleScan}
+                                    disabled={!name.trim()}
+                                    className="w-full rounded-full bg-zinc-900 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-all hover:bg-zinc-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-30"
                                 >
                                     Verify
                                 </button>
@@ -185,54 +175,48 @@ function ProximityScanner() {
                         </motion.div>
                     )}
 
-                    {/* STATE 2: SCANNING - SILVER ANIMATION */}
                     {status === "scanning" && (
-                        <motion.div 
+                        <motion.div
                             key="scanning"
-                            initial={{ opacity: 0 }} 
-                            animate={{ opacity: 1 }} 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="flex flex-col items-center justify-center h-full gap-6 w-full"
+                            className="flex h-full w-full flex-col items-center justify-center gap-6"
                         >
                             <div className="relative">
-                                <div className="w-20 h-20 rounded-full border-2 border-white/5 animate-spin" />
-                                <div className="absolute inset-0 rounded-full border-t-2 border-white/80 animate-spin" />
+                                <div className="h-20 w-20 animate-spin rounded-full border-2 border-zinc-100" />
+                                <div className="absolute inset-0 animate-spin rounded-full border-t-2 border-zinc-900" />
                             </div>
-                            <p className="text-[10px] text-gray-500 font-mono tracking-widest animate-pulse">
-                                DECRYPTING...
-                            </p>
+                            <p className="animate-pulse font-mono text-[10px] tracking-widest text-zinc-500">DECRYPTING...</p>
                         </motion.div>
                     )}
 
-                    {/* STATE 3: RESULT - SILVER HIGHLIGHT */}
                     {status === "result" && (
-                        <motion.div 
+                        <motion.div
                             key="result"
-                            initial={{ opacity: 0, scale: 0.95 }} 
-                            animate={{ opacity: 1, scale: 1 }} 
-                            className="w-full flex flex-col items-center space-y-6"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="flex w-full flex-col items-center space-y-6"
                         >
                             <div className="text-center">
-                                <p className={`text-[9px] font-bold uppercase tracking-widest mb-2 ${percentage < 40 ? 'text-gray-600' : 'text-gray-400'}`}>
-                                    {percentage < 40 ? 'ACCESS DENIED' : 'COMPATIBILITY'}
+                                <p className="mb-2 text-[9px] font-bold uppercase tracking-widest text-zinc-400">
+                                    {percentage < 40 ? "ACCESS DENIED" : "COMPATIBILITY"}
                                 </p>
-                                <h1 className={`text-7xl font-black tracking-tighter tabular-nums ${percentage < 40 ? 'text-gray-700' : 'text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400'}`}>
+                                <h1 className={`text-7xl font-black tabular-nums tracking-tighter ${percentage < 40 ? "text-zinc-300" : "bg-gradient-to-b from-zinc-900 to-zinc-400 bg-clip-text text-transparent"}`}>
                                     {percentage}%
                                 </h1>
                             </div>
 
-                            <div className={`px-6 py-3 rounded-xl border backdrop-blur-md w-full text-center ${percentage < 40 ? 'border-red-900/20 bg-red-900/5' : 'border-white/10 bg-white/5'}`}>
-                                <div className="flex items-center justify-center gap-2 mb-1">
-                                    {percentage >= 90 ? <Sparkles size={12} className="text-white"/> : percentage < 40 ? <Lock size={12} className="text-gray-600"/> : <Fingerprint size={12} className="text-white"/>}
-                                    <span className={`text-[10px] font-bold uppercase tracking-widest ${percentage < 40 ? 'text-gray-600' : 'text-white'}`}>{name}</span>
+                            <div className={`w-full rounded-xl border px-6 py-3 text-center ${percentage < 40 ? "border-red-200 bg-red-50" : "border-zinc-200 bg-zinc-50"}`}>
+                                <div className="mb-1 flex items-center justify-center gap-2">
+                                    {percentage >= 90 ? <Sparkles size={12} className="text-zinc-900" /> : percentage < 40 ? <Lock size={12} className="text-zinc-400" /> : <Fingerprint size={12} className="text-zinc-900" />}
+                                    <span className={`text-[10px] font-bold uppercase tracking-widest ${percentage < 40 ? "text-zinc-400" : "text-zinc-900"}`}>{name}</span>
                                 </div>
-                                <p className={`text-[10px] font-medium uppercase tracking-wider ${percentage < 40 ? 'text-gray-600' : 'text-gray-400'}`}>
-                                    {message}
-                                </p>
+                                <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">{message}</p>
                             </div>
 
-                            <button onClick={reset} className="mt-4 flex items-center justify-center gap-2 text-[9px] font-bold text-gray-600 hover:text-white transition-colors uppercase tracking-widest group">
-                                <RefreshCcw size={10} className="group-hover:-rotate-180 transition-transform duration-500" /> 
+                            <button onClick={reset} className="group mt-4 flex items-center justify-center gap-2 text-[9px] font-bold uppercase tracking-widest text-zinc-400 transition-colors hover:text-zinc-900">
+                                <RefreshCcw size={10} className="transition-transform duration-500 group-hover:-rotate-180" />
                                 Retry
                             </button>
                         </motion.div>
@@ -243,208 +227,251 @@ function ProximityScanner() {
     );
 }
 
+function SectionLabel({ n, label }: { n: string; label: string }) {
+  return <span className="mb-2 block font-mono text-xs uppercase tracking-wider text-zinc-500">({n}) {label}</span>;
+}
+
 export default function AboutPage() {
   const [photos, setPhotos] = useState<GalleryItem[]>([]);
-  const [filteredPhotos, setFilteredPhotos] = useState<GalleryItem[]>([]);
   const [activeTab, setActiveTab] = useState("All");
   const [projectCount, setProjectCount] = useState<number | null>(null);
 
   useEffect(() => {
     async function fetchGallery() {
       const { data, error } = await supabase.from("gallery").select("*").order("id", { ascending: false });
-      if (!error && data) {
-        setPhotos(data);
-        setFilteredPhotos(data);
-      }
+      if (!error && data) setPhotos(data);
     }
-    
     async function fetchProjectCount() {
-        const { count, error } = await supabase.from("projects").select("*", { count: "exact", head: true });
-        if (!error) setProjectCount(count);
+      const { count, error } = await supabase.from("projects").select("*", { count: "exact", head: true });
+      if (!error) setProjectCount(count);
     }
-
     fetchGallery();
     fetchProjectCount();
   }, []);
 
-  useEffect(() => {
-    if (activeTab === "All") {
-      setFilteredPhotos(photos);
-    } else {
-      setFilteredPhotos(photos.filter((p) => p.category?.toLowerCase() === activeTab.toLowerCase()));
-    }
-  }, [activeTab, photos]);
+  const filteredPhotos =
+    activeTab === "All" ? photos : photos.filter((p) => p.category?.toLowerCase() === activeTab.toLowerCase());
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white overflow-x-hidden selection:bg-blue-500/30">
+    <main className="min-h-screen overflow-x-hidden bg-[#fcfbfa] text-zinc-900 selection:bg-zinc-900 selection:text-white">
       <Navbar />
-      
-      {/* BACKGROUND ACCENTS */}
-      <div className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[10%] right-[10%] w-[600px] h-[600px] bg-blue-900/5 rounded-full blur-[150px]" />
-        <div className="absolute bottom-[10%] left-[10%] w-[500px] h-[500px] bg-purple-900/5 rounded-full blur-[150px]" />
-      </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 pt-32 pb-20">
-        
-        {/* SECTION 1: PROFILE INTRO */}
-        <div className="flex flex-col md:flex-row gap-16 items-start mb-24">
-          {/* FOTO PROFIL */}
-          <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} className="w-full md:w-1/3 space-y-6">
-            <div className="group relative aspect-[3/4] rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl">
-              <img src="profile-sugih.jpg" onError={(e) => { (e.target as HTMLImageElement).src = "https://ui-avatars.com/api/?name=Sugih+Nugraha&background=000&color=fff&size=512"; }} alt="Moch. Sugih Nugraha" className="object-cover w-full h-full transition duration-700 group-hover:scale-105" />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/50 to-transparent p-8 z-20">
-                <h2 className="text-2xl font-bold text-white tracking-tight">Moch. Sugih Nugraha</h2>
-                <p className="text-gray-400 text-sm font-medium">Trader & Creative Developer</p>
+      <div className="mx-auto max-w-7xl px-4 pb-24 pt-32 sm:px-6 lg:px-8">
+        {/* ===== INTRO ===== */}
+        <section className="mb-32 grid grid-cols-1 items-start gap-12 md:grid-cols-12">
+          <div className="md:col-span-5">
+            <Reveal>
+              <div className="group relative aspect-[3/4] overflow-hidden rounded-[2rem] bg-zinc-200">
+                <Parallax offset={36} className="absolute -inset-y-[8%] inset-x-0">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/profile-sugih.jpg"
+                    alt="Moch Sugih Nugraha"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                </Parallax>
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent p-6 sm:p-8">
+                  <h2 className="text-2xl font-semibold tracking-tight text-white">Moch Sugih Nugraha</h2>
+                  <p className="text-sm font-medium text-white/70">Frontend Engineer</p>
+                </div>
               </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/5 border border-white/10 p-6 rounded-[2rem] backdrop-blur-md">
-                    <span className="block text-4xl font-light text-white mb-1">3+</span>
-                    <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Years Exp.</span>
-                </div>
-                <div className="bg-white/5 border border-white/10 p-6 rounded-[2rem] backdrop-blur-md">
-                      <span className="block text-4xl font-light text-white mb-1">
-                          {projectCount !== null ? projectCount : "..."}
-                      </span>
-                      <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Projects</span>
-                </div>
-            </div>
-          </motion.div>
+            </Reveal>
 
-          {/* BIO & TEXT */}
-          <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="w-full md:w-2/3 space-y-10">
-            
-            <motion.div 
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={titaniumTextVariant} 
-                className="space-y-6"
-            >
-                <span className="inline-block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400/80 border border-white/10 px-4 py-2 rounded-full backdrop-blur-sm bg-white/[0.02]">
-                    The Profile
-                </span>
-                
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-tight">
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-400 via-white to-gray-400 bg-[length:200%_auto] animate-shine">
-                    Beyond the Screen.
+            <div className="mt-4 grid grid-cols-2 gap-4">
+              <Reveal delay={0.1}>
+                <div className="rounded-3xl border border-zinc-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(24,24,27,0.06)]">
+                  <span className="font-sf-pro mb-1 block text-4xl font-semibold tracking-tight">
+                    <CountUp to={5} suffix="+" />
                   </span>
-                </h1>
-            </motion.div>
-
-            <div className="text-gray-400 text-lg leading-relaxed space-y-6 font-light max-w-2xl">
-              <p>Hello! I am <strong className="text-white font-medium">Moch Sugih Nugraha</strong>, a <strong className="text-white font-medium">Product Engineer</strong> focusing on building end-to-end full-stack web applications.</p>
-                <p>I specialize in the <strong className="text-white font-medium">Next.js & Supabase</strong> ecosystem, and I am deeply passionate about leveraging <strong className="text-white font-medium">AI Automation (n8n & LLM)</strong> to slash business operational overhead.</p>
-                <p>I believe that the best code architecture is one that <strong className="text-white font-medium">measurably solves real-world business problems</strong>.</p>
+                  <span className="text-xs text-zinc-500">Years building for the web</span>
+                </div>
+              </Reveal>
+              <Reveal delay={0.16}>
+                <div className="rounded-3xl border border-zinc-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(24,24,27,0.06)]">
+                  <span className="font-sf-pro mb-1 block text-4xl font-semibold tracking-tight">
+                    {projectCount !== null ? <CountUp to={projectCount} /> : "…"}
+                  </span>
+                  <span className="text-xs text-zinc-500">Projects</span>
+                </div>
+              </Reveal>
             </div>
-            
+          </div>
+
+          <div className="space-y-10 md:col-span-7">
             <div>
-              <h3 className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-4 opacity-70 flex items-center gap-2"><Zap size={14} className="text-yellow-500" /> Areas of Focus</h3>
-              <div className="flex flex-wrap gap-3 mt-4">
-                {skills.map((skill) => (
-                  <span key={skill} className="px-5 py-2 rounded-full bg-white/5 border border-white/10 text-gray-300 text-[11px] font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-all duration-300 cursor-default">{skill}</span>
-                ))}
+              <SectionLabel n="01" label="The Profile" />
+              <h1 className="font-sf-pro text-5xl font-medium leading-none tracking-tight sm:text-6xl lg:text-7xl">
+                <SplitText text="Beyond the" />{" "}
+                <SplitText text="screen." delay={0.15} wordClassName="bg-gradient-to-b from-zinc-900 to-zinc-400 bg-clip-text text-transparent" />
+              </h1>
+            </div>
+
+            <Reveal delay={0.1}>
+              <div className="max-w-2xl space-y-5 text-lg leading-relaxed text-zinc-600">
+                <p>
+                  Hello! I&apos;m <strong className="font-semibold text-zinc-900">Moch Sugih Nugraha</strong>, a{" "}
+                  <strong className="font-semibold text-zinc-900">Frontend Engineer</strong> from Sumedang, West Java,
+                  building web interfaces with React, Next.js, and TypeScript for small businesses and local government.
+                </p>
+                <p>
+                  I&apos;ve shipped online ordering, operations dashboards, and map-based data tools — including a Next.js
+                  portal scoring <strong className="font-semibold text-zinc-900">95+ on Lighthouse</strong> and a
+                  self-service ordering flow that handled <strong className="font-semibold text-zinc-900">500+ transactions</strong> in its first month.
+                </p>
+                <p>
+                  I&apos;m used to remote, asynchronous work, and I&apos;m currently studying Informatics at UNSAP (GPA 3.90/4.00).
+                </p>
               </div>
-            </div>
+            </Reveal>
 
-            <div className="pt-8 border-t border-white/5">
-                <h3 className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-6 opacity-70 flex items-center gap-2"><Users size={14} /> Connected With</h3>
-                <div className="relative w-full overflow-hidden mask-gradient">
-                   <motion.div className="flex gap-4 w-max" animate={{ x: ["0%", "-50%"] }} transition={{ repeat: Infinity, ease: "linear", duration: 40 }}>
-                      {[...network, ...network].map((person, idx) => (
-                          <div key={idx} className="flex items-center gap-3 pl-2 pr-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
-                             <img src={person.img} alt={person.name} className="w-9 h-9 rounded-full object-cover border border-white/10" />
-                             <div className="flex flex-col">
-                                <span className="text-xs font-bold text-white leading-tight">{person.name}</span>
-                                <span className="text-[10px] text-gray-400 leading-tight">{person.role}</span>
-                             </div>
-                          </div>
-                      ))}
-                   </motion.div>
-                </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* SECTION 2: LIFE GALLERY */}
-        <div className="pt-32 border-t border-white/5">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
-                <motion.div 
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    variants={titaniumTextVariant} 
-                    className="w-full md:w-auto text-center md:text-left"
-                >
-                    <span className="inline-block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400/80 border border-white/10 px-4 py-2 rounded-full backdrop-blur-sm bg-white/[0.02] mb-6">
-                        Visual Archives
-                    </span>
-                    <h2 className="text-5xl md:text-8xl font-bold tracking-tight leading-tight text-white">
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-400 via-white to-gray-400 bg-[length:200%_auto] animate-shine">
-                            Life Gallery.
-                        </span>
-                    </h2>
-                </motion.div>
-
-                <div className="flex flex-wrap justify-center md:justify-end gap-2 p-1.5 bg-white/5 backdrop-blur-3xl rounded-full border border-white/10 w-full md:w-auto">
-                    {categories.map((cat) => (
-                        <button key={cat} onClick={() => setActiveTab(cat)} className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 ${activeTab === cat ? "bg-white text-black shadow-xl" : "text-gray-500 hover:text-white"}`}>{cat}</button>
+            <div className="space-y-5">
+              <h3 className="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-zinc-500">
+                <Zap size={14} /> Technical Skills
+              </h3>
+              {skillGroups.map((g, gi) => (
+                <Reveal key={g.label} delay={gi * 0.06}>
+                  <p className="mb-2 text-sm font-semibold text-zinc-900">{g.label}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {g.items.map((s) => (
+                      <span
+                        key={s}
+                        className="cursor-default rounded-full border border-zinc-200 bg-white px-4 py-1.5 text-sm font-medium text-zinc-700 transition-all duration-300 hover:-translate-y-0.5 hover:border-zinc-900 hover:bg-zinc-900 hover:text-white"
+                      >
+                        {s}
+                      </span>
                     ))}
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ===== HIGHLIGHTS ===== */}
+        <section className="mb-32">
+          <div className="mb-10">
+            <SectionLabel n="02" label="Highlights" />
+            <h2 className="font-sf-pro text-4xl font-medium tracking-tight md:text-5xl">
+              <SplitText text="Awards & learning." />
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {highlights.map(({ icon: Icon, title, text }, i) => (
+              <Reveal key={title} delay={i * 0.08} className="h-full">
+                <div className="group h-full rounded-3xl border border-zinc-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(24,24,27,0.06)]">
+                  <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-2xl bg-zinc-900 text-white transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110">
+                    <Icon size={20} />
+                  </div>
+                  <h3 className="mb-2 text-lg font-semibold">{title}</h3>
+                  <p className="text-sm leading-relaxed text-zinc-600">{text}</p>
                 </div>
-            </div>
+              </Reveal>
+            ))}
+          </div>
+        </section>
 
-            {/* Gallery Grid */}
-            <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <AnimatePresence>
-                {filteredPhotos.map((photo, index) => (
-                    <motion.div layout key={photo.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: index * 0.05 }} className="relative group aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10 bg-[#0a0a0a]">
-                        <img src={photo.image_url} alt={photo.caption} className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-500 flex flex-col justify-end p-6 backdrop-blur-[2px]">
-                            <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest flex items-center gap-2 mb-2"><MapPin size={10} /> {photo.location}</span>
-                            <p className="text-white font-bold text-sm leading-tight">{photo.caption}</p>
-                        </div>
-                    </motion.div>
-                ))}
-                </AnimatePresence>
-            </motion.div>
-        </div>
-
-        {/* SECTION 3: THE INNER CIRCLE */}
-        <div className="pt-32 mt-32 border-t border-white/5 relative">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-96 bg-white/5 blur-[120px] pointer-events-none" />
-            
-            <div className="flex flex-col items-center justify-center text-center mb-16 relative z-10">
-                <motion.div 
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    variants={titaniumTextVariant} 
-                    className="space-y-6 flex flex-col items-center"
-                >
-                    <span className="inline-block text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400/80 border border-white/10 px-4 py-2 rounded-full backdrop-blur-sm bg-white/[0.02]">
-                        <Fingerprint size={12} className="inline mr-2 text-white" fill="currentColor" /> Neural Check
-                    </span>
-                    <h2 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight">
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-200 via-white to-gray-400 bg-[length:200%_auto] animate-shine">
-                            The Inner Circle.
-                        </span>
-                    </h2>
-                    <p className="text-gray-400 text-sm font-medium max-w-md mx-auto leading-relaxed">
-                        Algoritma enkripsi frekuensi untuk memvalidasi <br /> kedekatan Anda dengan Sugih.
-                    </p>
-                </motion.div>
-            </div>
-            
-            <motion.div 
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+        {/* ===== NETWORK ===== */}
+        <section className="mb-32">
+          <div className="mb-8">
+            <SectionLabel n="03" label="Network" />
+            <h2 className="flex items-center gap-3 font-sf-pro text-4xl font-medium tracking-tight md:text-5xl">
+              <SplitText text="Connected with." />
+            </h2>
+          </div>
+          <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+            <motion.div
+              className="flex w-max gap-4"
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{ repeat: Infinity, ease: "linear", duration: 40 }}
             >
-                <ProximityScanner />
+              {[...network, ...network].map((person, idx) => (
+                <div key={idx} className="flex items-center gap-3 rounded-full border border-zinc-200 bg-white py-2 pl-2 pr-5">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={person.img} alt={person.name} className="h-9 w-9 rounded-full object-cover" />
+                  <div className="flex flex-col">
+                    <span className="text-xs font-semibold leading-tight text-zinc-900">{person.name}</span>
+                    <span className="text-[10px] leading-tight text-zinc-500">{person.role}</span>
+                  </div>
+                </div>
+              ))}
             </motion.div>
-        </div>
+          </div>
+        </section>
+
+        {/* ===== GALLERY ===== */}
+        <section className="mb-32">
+          <div className="mb-12 flex flex-col justify-between gap-8 md:flex-row md:items-end">
+            <div>
+              <SectionLabel n="04" label="Visual Archives" />
+              <h2 className="font-sf-pro text-5xl font-medium tracking-tight md:text-7xl">
+                <SplitText text="Life Gallery." />
+              </h2>
+            </div>
+            <div className="flex w-full flex-wrap gap-1 rounded-full border border-zinc-200 bg-white p-1.5 md:w-auto">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveTab(cat)}
+                  className="relative rounded-full px-5 py-2 text-xs font-medium transition-colors duration-300"
+                >
+                  {activeTab === cat && (
+                    <motion.span
+                      layoutId="gallery-tab"
+                      className="absolute inset-0 rounded-full bg-zinc-900"
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    />
+                  )}
+                  <span className={`relative ${activeTab === cat ? "text-white" : "text-zinc-500 hover:text-zinc-900"}`}>{cat}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <motion.div layout className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <AnimatePresence mode="popLayout">
+              {filteredPhotos.map((photo, index) => (
+                <motion.div
+                  layout
+                  key={photo.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.6, delay: Math.min(index, 8) * 0.04, ease: [0.16, 1, 0.3, 1] }}
+                  className="group relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-zinc-200"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={photo.image_url} alt={photo.caption} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/10 to-transparent p-6 opacity-0 transition duration-500 group-hover:opacity-100">
+                    <span className="mb-2 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-white/70">
+                      <MapPin size={10} /> {photo.location}
+                    </span>
+                    <p className="translate-y-2 text-sm font-semibold leading-tight text-white transition-transform duration-500 group-hover:translate-y-0">{photo.caption}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        </section>
+
+        {/* ===== INNER CIRCLE ===== */}
+        <section className="rounded-[2rem] border border-zinc-200 bg-[#f5f5f4] px-6 py-20 text-center">
+          <div className="flex flex-col items-center">
+            <span className="mb-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-zinc-500">
+              <Users size={14} /> Neural Check
+            </span>
+            <h2 className="font-sf-pro text-5xl font-medium tracking-tight md:text-6xl">
+              <SplitText text="The Inner Circle." />
+            </h2>
+            <Reveal delay={0.15}>
+              <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-zinc-500">
+                Algoritma enkripsi frekuensi untuk memvalidasi kedekatan Anda dengan Sugih.
+              </p>
+            </Reveal>
+          </div>
+          <Reveal delay={0.2}>
+            <ProximityScanner />
+          </Reveal>
+        </section>
       </div>
     </main>
   );

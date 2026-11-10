@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Menu, X } from "lucide-react";
+import { motion } from "framer-motion";
 
 const navLinks = [
   { name: "Experience", path: "/#experience" },
@@ -18,14 +19,18 @@ export default function Navbar() {
 
   return (
     <header className="fixed inset-x-0 top-3 z-[100] px-3 transition-all duration-500 ease-in-out">
-      <nav className="mx-auto max-w-[740px] rounded-full border border-zinc-200/70 bg-white/90 px-5 py-2 shadow-[0_2px_24px_rgba(0,0,0,0.08)] backdrop-blur-xl transition-all duration-500 ease-in-out">
+      <motion.nav
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+        className="mx-auto max-w-[740px] rounded-full border border-zinc-200/70 bg-white/90 px-5 py-2 shadow-[0_2px_24px_rgba(0,0,0,0.08)] backdrop-blur-xl transition-all duration-500 ease-in-out">
         <div className="flex items-center justify-between gap-4">
           <Link
             href="/"
             aria-label="Go to homepage"
             className="font-sf-pro shrink-0 text-[0.9375rem] font-semibold tracking-tight text-zinc-900"
           >
-            Sugih Nugraha
+            Moch Sugih Nugraha
           </Link>
 
           <div className="hidden items-center gap-0 md:flex">
@@ -33,7 +38,7 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.path}
-                className="px-3.5 py-1.5 text-sm font-medium text-zinc-500 transition-colors duration-200 hover:text-zinc-900"
+                className="relative px-3.5 py-1.5 text-sm font-medium text-zinc-500 transition-colors duration-200 after:absolute after:inset-x-3.5 after:bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-zinc-900 after:transition-transform after:duration-300 hover:text-zinc-900 hover:after:scale-x-100"
               >
                 {link.name}
               </Link>
@@ -82,7 +87,7 @@ export default function Navbar() {
             </a>
           </div>
         )}
-      </nav>
+      </motion.nav>
     </header>
   );
 }

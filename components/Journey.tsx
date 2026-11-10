@@ -1,3 +1,9 @@
+"use client";
+
+import { useRef } from "react";
+import { motion, useScroll, useSpring } from "framer-motion";
+import { Reveal, SplitText } from "@/components/motion";
+
 type ExperienceItem = {
   role: string;
   org: string;
@@ -67,20 +73,28 @@ const experience: ExperienceItem[] = [
 ];
 
 export default function Journey() {
+  const listRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: listRef, offset: ["start 75%", "end 60%"] });
+  const lineScale = useSpring(scrollYProgress, { stiffness: 100, damping: 25, mass: 0.3 });
+
   return (
     <section id="experience" className="mb-32 scroll-mt-24">
       <div className="mb-12">
         <span className="mb-2 block font-mono text-xs uppercase tracking-wider text-zinc-500">(02) Work History</span>
-        <h2 className="font-sf-pro text-4xl font-medium tracking-tight text-zinc-900 md:text-5xl">Experience.</h2>
+        <h2 className="font-sf-pro text-4xl font-medium tracking-tight text-zinc-900 md:text-5xl"><SplitText text="Experience." /></h2>
       </div>
 
-      <div className="relative">
+      <div ref={listRef} className="relative">
         <div className="absolute bottom-0 left-[7px] top-2 w-px bg-zinc-200" />
+        <motion.div
+          style={{ scaleY: lineScale }}
+          className="absolute bottom-0 left-[7px] top-2 w-px origin-top bg-zinc-900"
+        />
         <div className="space-y-0">
           {experience.map((item, i) => (
-            <div key={item.role + item.period} className="relative pb-12 pl-8 last:pb-0">
+            <Reveal key={item.role + item.period} x={24} y={0} className="group relative pb-12 pl-8 last:pb-0">
               <div
-                className={`absolute left-0 top-1.5 h-[15px] w-[15px] rounded-full border-2 ${
+                className={`absolute left-0 top-1.5 h-[15px] w-[15px] rounded-full border-2 transition-transform duration-300 group-hover:scale-125 ${
                   i === 0 ? "border-zinc-900 bg-zinc-900" : "border-zinc-300 bg-[#fcfbfa]"
                 }`}
               />
@@ -101,7 +115,7 @@ export default function Journey() {
                   ))}
                 </ul>
               )}
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>

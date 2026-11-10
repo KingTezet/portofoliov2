@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, ArrowUpRight, ExternalLink, Github, ImageOff, Search } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import Navbar from "@/components/Navbar";
-import { motion, AnimatePresence } from "framer-motion";
-import { Github, ExternalLink, Search, ImageOff, ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { Reveal, SplitText, Tilt } from "@/components/motion";
 
 type Project = {
   id: number;
@@ -16,233 +17,189 @@ type Project = {
   demo_url?: string;
   repo_url?: string;
   category: string;
-  slug: string; 
+  slug: string;
 };
 
 const categories = ["All", "Full-Stack", "AI & Automation", "Frontend", "UI/UX"];
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [activeTab, setActiveTab] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchProjects() {
-      const { data, error } = await supabase
-        .from("projects")
-        .select("*")
-        .order("id", { ascending: false });
-
+      const { data, error } = await supabase.from("projects").select("*").order("id", { ascending: false });
       if (error) console.error("Error:", error);
-      else {
-        setProjects(data || []);
-        setFilteredProjects(data || []);
-      }
+      else setProjects(data || []);
       setLoading(false);
     }
     fetchProjects();
   }, []);
 
-  useEffect(() => {
-    let result = projects;
-    if (activeTab !== "All") {
-      result = result.filter(
-        (p) => p.category?.toLowerCase() === activeTab.toLowerCase()
+  const filtered = useMemo(() => {
+    const q = searchQuery.toLowerCase();
+    return projects.filter((p) => {
+      if (activeTab !== "All" && p.category?.toLowerCase() !== activeTab.toLowerCase()) return false;
+      if (!q) return true;
+      return (
+        p.title.toLowerCase().includes(q) ||
+        p.description?.toLowerCase().includes(q) ||
+        p.tech_stack?.some((t) => t.toLowerCase().includes(q))
       );
-    }
-    if (searchQuery) {
-      result = result.filter(
-        (p) =>
-          p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.tech_stack?.some((t) =>
-            t.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-      );
-    }
-    setFilteredProjects(result);
-  }, [activeTab, searchQuery, projects]);
+    });
+  }, [projects, activeTab, searchQuery]);
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white overflow-x-hidden">
+    <main className="min-h-screen overflow-x-hidden bg-[#fcfbfa] text-zinc-900 selection:bg-zinc-900 selection:text-white">
       <Navbar />
 
-      <div className="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[800px] h-[800px] bg-blue-900/5 rounded-full blur-[150px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[800px] h-[800px] bg-purple-900/5 rounded-full blur-[150px]" />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 pt-32 pb-20">
-        
+      <div className="mx-auto max-w-7xl px-4 pb-24 pt-32 sm:px-6 lg:px-8">
         {/* HEADER */}
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="space-y-4 max-w-2xl"
-          >
-             <Link href="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-white transition mb-4 text-sm font-medium">
-                <ArrowLeft size={16} /> Back to Home
-             </Link>
-             <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-500">
-                   All Projects.
-                </span>
-             </h1>
-             <p className="text-gray-400 text-lg font-light">
-                Koleksi lengkap hasil karya dari berbagai bidang keahlian.
-             </p>
-          </motion.div>
+        <div className="mb-12 flex flex-col justify-between gap-8 md:flex-row md:items-end">
+          <div className="max-w-2xl">
+            <Reveal y={10}>
+              <Link href="/" className="group mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900">
+                <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" /> Back to Home
+              </Link>
+            </Reveal>
+            <span className="mb-2 block font-mono text-xs uppercase tracking-wider text-zinc-500">(Archive) All Work</span>
+            <h1 className="font-sf-pro text-5xl font-medium leading-none tracking-tight md:text-7xl">
+              <SplitText text="All" />{" "}
+              <SplitText text="Projects." delay={0.08} wordClassName="bg-gradient-to-b from-zinc-900 to-zinc-400 bg-clip-text text-transparent" />
+            </h1>
+            <Reveal delay={0.15}>
+              <p className="mt-4 text-lg text-zinc-600">Koleksi lengkap hasil karya dari berbagai bidang keahlian.</p>
+            </Reveal>
+          </div>
 
-          <motion.div 
-            initial={{ opacity: 0, x: 10 }} 
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
-            className="w-full md:w-auto"
-          >
-             <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur opacity-50 group-hover:opacity-100 transition duration-500"></div>
-                <div className="relative flex items-center bg-[#0a0a0a] border border-white/10 rounded-full px-4 py-3 w-full md:w-80">
-                   <Search className="text-gray-500 mr-3" size={18} />
-                   <input 
-                      type="text" 
-                      placeholder="Search project, tech, or stack..." 
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="bg-transparent border-none outline-none text-sm text-white placeholder-gray-600 w-full"
-                   />
-                </div>
-             </div>
-          </motion.div>
-        </div>
-
-        {/* FILTER BUTTONS */}
-        <div className="flex flex-wrap gap-2 mb-12">
-            {categories.map((cat, idx) => (
-            <motion.button
-                key={cat}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: idx * 0.05 }}
-                onClick={() => setActiveTab(cat)}
-                className={`
-                px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 border backdrop-blur-md
-                ${activeTab === cat 
-                    ? "bg-white text-black border-white shadow-[0_0_15px_rgba(255,255,255,0.2)]" 
-                    : "bg-white/5 text-gray-400 border-white/5 hover:bg-white/10 hover:border-white/20 hover:text-white"}
-                `}
-            >
-                {cat}
-            </motion.button>
-            ))}
-        </div>
-
-        {/* GRID CONTENT */}
-        {loading ? (
-             <div className="text-center py-40 text-gray-500 animate-pulse font-light tracking-widest">
-                LOADING ARCHIVES...
-             </div>
-        ) : (
-            <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <AnimatePresence mode="popLayout">
-                {filteredProjects.map((project, index) => (
-                    <motion.div
-                        layout
-                        key={project.id}
-                        initial={{ opacity: 0, y: 20, scale: 0.98 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.98 }}
-                        transition={{ duration: 0.6, delay: index * 0.05, ease: [0.25, 0.4, 0.25, 1] }}
-                        className="group relative bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-500 flex flex-col h-full"
-                    >
-                        {/* --- LINK TRANSPARAN (OVERLAY) --- */}
-                        {/* Ini akan menutupi seluruh kartu dan membuatnya bisa diklik */}
-                        <Link 
-                            href={`/projects/${project.slug}`} 
-                            className="absolute inset-0 z-10"
-                            aria-label={`View ${project.title}`}
-                        />
-                        {/* ---------------------------------- */}
-
-                        {/* --- CONTENT --- */}
-                        <div className="relative w-full h-48 sm:h-56 bg-gray-900 border-b border-white/5 overflow-hidden">
-                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-800 text-gray-500 z-0">
-                                <ImageOff size={24} className="mb-2 opacity-50" />
-                                <span className="text-[10px] uppercase tracking-widest opacity-50">No Preview</span>
-                            </div>
-
-                            {project.thumbnail_url && (
-                                <img
-                                    src={project.thumbnail_url}
-                                    alt={project.title}
-                                    className="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 ease-out group-hover:scale-105"
-                                    onLoad={(e) => (e.target as HTMLImageElement).classList.remove("opacity-0")}
-                                    onError={(e) => (e.target as HTMLImageElement).style.display = "none"}
-                                />
-                            )}
-                            
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60 pointer-events-none z-0" />
-                            <div className="absolute top-4 left-4 z-0">
-                                <span className="px-3 py-1 bg-black/50 backdrop-blur-md border border-white/10 rounded-full text-[10px] font-mono uppercase tracking-wider text-white">
-                                    {project.category}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="p-8 flex flex-col flex-grow">
-                            <div className="flex justify-between items-start mb-4 relative z-20"> 
-                                <h3 className="text-xl font-bold text-white leading-tight group-hover:text-blue-100 transition-colors pointer-events-none">
-                                    {project.title}
-                                </h3>
-                                
-                                {/* Tombol GitHub/Demo harus punya z-index lebih tinggi dari Link Overlay (z-20 vs z-10) */}
-                                <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    {project.repo_url && (
-                                        <a href={project.repo_url} target="_blank" className="text-gray-400 hover:text-white relative z-20">
-                                            <Github size={18} />
-                                        </a>
-                                    )}
-                                    {project.demo_url && (
-                                        <a href={project.demo_url} target="_blank" className="text-gray-400 hover:text-white relative z-20">
-                                            <ExternalLink size={18} />
-                                        </a>
-                                    )}
-                                </div>
-                            </div>
-
-                            <p className="text-gray-400 text-sm leading-relaxed mb-6 font-light line-clamp-3 pointer-events-none">
-                                {project.description}
-                            </p>
-
-                            <div className="flex flex-wrap gap-2 mt-auto pointer-events-none">
-                                {project.tech_stack?.map((tech) => (
-                                    <span key={tech} className="px-3 py-1 rounded-md bg-white/5 border border-white/5 text-[10px] text-gray-300">
-                                        {tech}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    </motion.div>
-                ))}
-                </AnimatePresence>
-            </motion.div>
-        )}
-
-        {!loading && filteredProjects.length === 0 && (
-            <div className="text-center py-32 border border-dashed border-white/5 rounded-3xl mt-8">
-                <p className="text-gray-500">No projects found matching your criteria.</p>
-                <button 
-                    onClick={() => {setSearchQuery(""); setActiveTab("All");}}
-                    className="mt-4 text-blue-400 hover:text-white text-sm"
-                >
-                    Clear Filter
-                </button>
+          <Reveal delay={0.1} x={16} y={0} className="w-full md:w-auto">
+            <div className="flex w-full items-center rounded-full border border-zinc-200 bg-white px-4 py-3 shadow-sm transition-all duration-300 focus-within:border-zinc-900 focus-within:shadow-[0_10px_30px_rgba(24,24,27,0.08)] md:w-80">
+              <Search className="mr-3 text-zinc-400" size={18} />
+              <input
+                type="text"
+                placeholder="Search project, tech, or stack..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full border-none bg-transparent text-sm text-zinc-900 outline-none placeholder:text-zinc-400"
+              />
             </div>
+          </Reveal>
+        </div>
+
+        {/* FILTER */}
+        <Reveal delay={0.15}>
+          <div className="mb-12 inline-flex flex-wrap gap-1 rounded-full border border-zinc-200 bg-white p-1.5">
+            {categories.map((cat) => (
+              <button key={cat} onClick={() => setActiveTab(cat)} className="relative rounded-full px-5 py-2 text-sm font-medium">
+                {activeTab === cat && (
+                  <motion.span
+                    layoutId="project-tab"
+                    className="absolute inset-0 rounded-full bg-zinc-900"
+                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  />
+                )}
+                <span className={`relative transition-colors ${activeTab === cat ? "text-white" : "text-zinc-500 hover:text-zinc-900"}`}>{cat}</span>
+              </button>
+            ))}
+          </div>
+        </Reveal>
+
+        {/* GRID */}
+        {loading ? (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-[380px] animate-pulse rounded-[2rem] bg-zinc-200/70" />
+            ))}
+          </div>
+        ) : (
+          <motion.div layout className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <AnimatePresence mode="popLayout">
+              {filtered.map((project, index) => (
+                <motion.div
+                  layout
+                  key={project.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{ duration: 0.6, delay: Math.min(index, 8) * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                  className="h-full"
+                >
+                  <Tilt max={4} className="h-full">
+                    <div className="group relative flex h-full flex-col overflow-hidden rounded-[2rem] border border-zinc-200 bg-white shadow-[0_18px_60px_rgba(24,24,27,0.05)] transition-shadow duration-500 hover:shadow-[0_24px_70px_rgba(24,24,27,0.12)]">
+                      <Link href={`/projects/${project.slug}`} className="absolute inset-0 z-10" aria-label={`View ${project.title}`} />
+
+                      <div className="relative aspect-[16/10] w-full overflow-hidden bg-zinc-100">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-400">
+                          <ImageOff size={24} className="mb-2" />
+                          <span className="text-[10px] uppercase tracking-widest">No Preview</span>
+                        </div>
+                        {project.thumbnail_url && (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={project.thumbnail_url}
+                            alt={project.title}
+                            loading="lazy"
+                            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
+                          />
+                        )}
+                        <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-900 backdrop-blur">
+                          {project.category}
+                        </span>
+                        <span className="absolute bottom-4 right-4 flex h-10 w-10 translate-y-2 items-center justify-center rounded-full bg-white/90 text-zinc-900 opacity-0 backdrop-blur transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                          <ArrowUpRight size={18} />
+                        </span>
+                      </div>
+
+                      <div className="flex flex-grow flex-col p-6">
+                        <div className="mb-3 flex items-start justify-between gap-3">
+                          <h3 className="font-sf-pro text-2xl font-medium tracking-tight text-zinc-900">{project.title}</h3>
+                          <div className="relative z-20 flex gap-3 pt-1">
+                            {project.repo_url && (
+                              <a href={project.repo_url} target="_blank" rel="noopener noreferrer" aria-label="Source code" className="text-zinc-400 transition-colors hover:text-zinc-900">
+                                <Github size={18} />
+                              </a>
+                            )}
+                            {project.demo_url && (
+                              <a href={project.demo_url} target="_blank" rel="noopener noreferrer" aria-label="Live demo" className="text-zinc-400 transition-colors hover:text-zinc-900">
+                                <ExternalLink size={18} />
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                        <p className="mb-6 line-clamp-3 text-sm leading-6 text-zinc-600">{project.description}</p>
+                        <div className="mt-auto flex flex-wrap gap-2">
+                          {project.tech_stack?.map((tech) => (
+                            <span key={tech} className="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-[11px] font-medium text-zinc-600">
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </Tilt>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
         )}
 
+        {!loading && filtered.length === 0 && (
+          <div className="mt-8 rounded-[2rem] border border-dashed border-zinc-300 py-32 text-center">
+            <p className="text-zinc-500">No projects found matching your criteria.</p>
+            <button
+              onClick={() => {
+                setSearchQuery("");
+                setActiveTab("All");
+              }}
+              className="mt-4 rounded-full bg-zinc-900 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
+            >
+              Clear Filter
+            </button>
+          </div>
+        )}
       </div>
     </main>
   );
