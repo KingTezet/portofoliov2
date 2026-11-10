@@ -263,32 +263,6 @@ export const curatedProjects: ProjectEntry[] = [
     },
   },
   {
-    id: "archival",
-    slug: "archival-ai-knowledge-base",
-    title: "Archival AI — AI Knowledge Base",
-    category: "AI & Automation",
-    services: "AI & Full-Stack Development",
-    productType: "AI Knowledge Base Chat Platform",
-    context: "Independent project",
-    summary:
-      "A streaming AI chat over a document knowledge base with built-in citations (RAG), cutting document lookup from 15 minutes to under 30 seconds.",
-    tags: ["Next.js", "Supabase pgvector", "OpenAI / Claude API", "n8n Webhooks", "TypeScript", "Tailwind CSS"],
-    supporting: true,
-    caseStudy: {
-      overview: "A streaming chat interface over a document knowledge base, using RAG with vector search and inline citations.",
-      challenge: "Finding an answer meant about 15 minutes of manual searching through documents.",
-      role: "Independent project — built the interface and the ingestion workflow.",
-      built: [
-        "Streaming chat interface in Next.js with inline citations.",
-        "Ingestion workflow with n8n webhooks and embeddings in Supabase pgvector.",
-        "A custom match_documents RPC for vector search.",
-      ],
-      outcome: ["Lookup time dropped from about 15 minutes to under 30 seconds."],
-    },
-  },
-
-  // ===== Archive only (/projects) =====
-  {
     id: "kopi-tobi",
     slug: "kopi-tobi",
     title: "Kopi Tobi — Coffee Shop Company Profile",
@@ -300,25 +274,12 @@ export const curatedProjects: ProjectEntry[] = [
       "A company profile site for a Sumedang coffee shop, covering the menu, space, services, testimonials, and location with opening hours.",
     tags: ["Company Profile", "Landing Page", "Google Maps"],
     thumbnail_url: "/images/projects/kopi-tobi.webp",
-  },
-  {
-    id: "affligen",
-    slug: "affligen-ai-generator",
-    title: "Affligen — AI Affiliate Content Generator",
-    category: "AI & Automation",
-    context: "PT Ngulik Teknologi Digital",
-    summary:
-      "An LLM-powered tool that turns a product image into publish-ready affiliate marketing copy, reducing content preparation from about 15 minutes to under 1 minute per asset.",
-    tags: ["LLM APIs", "n8n", "REST APIs", "Webhooks"],
-    caseStudy: {
-      overview: "A tool that turns a product image into publish-ready marketing copy.",
-      challenge: "Preparing content for each product asset took about 15 minutes.",
-      role: "Full-Stack & Automation Engineer at PT Ngulik Teknologi Digital.",
-      built: ["LLM-powered copy generation from a product image.", "Workflow automation with n8n, REST APIs, and webhooks."],
-      outcome: ["Content preparation reduced from about 15 minutes to under 1 minute per asset."],
-    },
+    supporting: true,
   },
 ];
+
+/** Removed from the portfolio; hide matching Supabase rows too. */
+const hiddenSlugs = new Set(["archival-ai-knowledge-base", "affligen-ai-generator"]);
 
 const isPlaceholder = (url?: string | null) => !url || url.includes("placehold.co");
 
@@ -342,7 +303,7 @@ export function mergeProjects(rows: DbProject[] | null | undefined): ProjectEntr
 
   const known = new Set(curatedProjects.map((p) => p.slug));
   const extra: ProjectEntry[] = db
-    .filter((r) => !known.has(r.slug))
+    .filter((r) => !known.has(r.slug) && !hiddenSlugs.has(r.slug))
     .map((r) => ({
       id: r.id,
       slug: r.slug,
