@@ -190,12 +190,12 @@ export const curatedProjects: ProjectEntry[] = [
     category: "E-commerce · Local Business",
     services: "E-commerce & Web Development",
     productType: "Online Grocery Platform",
-    context: "Local SME · kedai-karuhun.my.id",
+    context: "Local SME · kedaikaruhun.my.id",
     summary:
       "An online ordering app for fresh fruit and vegetables delivered to the door, with a dynamic catalog and self-service checkout.",
     tags: ["Next.js", "React", "TypeScript", "Supabase", "Tailwind CSS", "Vercel"],
     thumbnail_url: "/images/projects/kedai-karuhun.webp",
-    demo_url: "https://kedai-karuhun.my.id",
+    demo_url: "https://www.kedaikaruhun.my.id/",
     supporting: true,
     caseStudy: {
       overview: "An online ordering app for fresh fruit and vegetables, delivered straight to customers' homes.",
