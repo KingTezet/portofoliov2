@@ -29,7 +29,6 @@ const experience: ExperienceItem[] = [
     org: "PT Ngulik Teknologi Digital",
     period: "Mar 2026 — Present",
     points: [
-      "Built Affligen, an LLM-powered tool that turns product images into publish-ready marketing copy, reducing content preparation from about 15 minutes to under 1 minute per asset.",
       "Connected Instagram publishing and a WhatsApp customer-service bot to n8n workflows. The bot handles about 70% of Tier-1 inquiries and reduced typical response time from about 2 hours to under 3 seconds.",
     ],
   },
