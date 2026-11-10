@@ -24,6 +24,10 @@ body {
     animation: heroFadeIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
+  .animate-nav-in {
+    animation: navIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  }
+
   .animate-hero-copy-in {
     animation: heroCopyIn 1s 0.5s both;
   }
@@ -52,6 +56,17 @@ body {
   }
 }
 
+@keyframes navIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -16px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 @keyframes heroCopyIn {
   from {
     opacity: 0;
@@ -60,6 +75,14 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-nav-in,
+  .animate-hero-fade-in,
+  .animate-hero-copy-in {
+    animation: none;
   }
 }
 

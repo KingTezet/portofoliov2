@@ -18,10 +18,10 @@ const socials = [
 const stack = ["React", "Next.js", "TypeScript", "Tailwind CSS", "Supabase", "Framer Motion"];
 
 const stats = [
-  { to: 95, suffix: "+", decimals: 0, label: "Lighthouse performance score" },
-  { to: 500, suffix: "+", decimals: 0, label: "Orders in first month of launch" },
-  { to: 40, suffix: "+", decimals: 0, label: "Students mentored in UI/UX" },
+  { to: 5, suffix: "+", decimals: 0, label: "Years building for the web" },
   { to: 3.9, suffix: "", decimals: 2, label: "GPA, B.S. Informatics" },
+  { to: 2, suffix: "×", decimals: 0, label: "University Innovation Challenge winner" },
+  { to: 8, suffix: "", decimals: 0, label: "Google Cloud badges earned" },
 ];
 
 export default function Hero() {

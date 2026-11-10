@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Menu, X } from "lucide-react";
-import { motion } from "framer-motion";
 
 const navLinks = [
   { name: "Experience", path: "/#experience" },
@@ -18,12 +17,9 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="fixed inset-x-0 top-3 z-[100] px-3 transition-all duration-500 ease-in-out">
-      <motion.nav
-        initial={{ y: -40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-        className="mx-auto max-w-[740px] rounded-full border border-zinc-200/70 bg-white/90 px-5 py-2 shadow-[0_2px_24px_rgba(0,0,0,0.08)] backdrop-blur-xl transition-all duration-500 ease-in-out">
+    <header className="fixed inset-x-0 top-3 z-[100] px-3">
+      <nav
+        className="animate-nav-in mx-auto max-w-[740px] rounded-full border border-zinc-200/70 bg-white/90 px-5 py-2 shadow-[0_2px_24px_rgba(0,0,0,0.08)] backdrop-blur-xl">
         <div className="flex items-center justify-between gap-4">
           <Link
             href="/"
@@ -87,7 +83,7 @@ export default function Navbar() {
             </a>
           </div>
         )}
-      </motion.nav>
+      </nav>
     </header>
   );
 }
