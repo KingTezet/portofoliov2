@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowUpRight, Github, Instagram, Linkedin, Mail, MapPin, MessageCircle } from "lucide-react";
+import { ArrowUpRight, Github, Instagram, Linkedin, Mail } from "lucide-react";
 import { CountUp, Reveal, SplitText } from "@/components/motion";
 import { curatedProjects } from "@/lib/projects";
 
@@ -157,40 +157,34 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="mb-12 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-          {stats.map((s, i) => (
-            <Reveal key={s.label} delay={i * 0.08} className="h-full">
-              <div className="h-full rounded-3xl border border-zinc-200 bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(24,24,27,0.06)] sm:p-6">
-                <p className="font-sf-pro text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl lg:text-5xl">
+        <Reveal>
+          <dl className="mb-10 grid grid-cols-2 border-t border-zinc-900 lg:grid-cols-4">
+            {stats.map((s, i) => (
+              <div
+                key={s.label}
+                className={`flex flex-col border-zinc-200 py-6 pr-4 ${i % 2 ? "border-l pl-4 sm:pl-6" : ""} ${i > 1 ? "border-t lg:border-t-0" : ""} ${i === 2 ? "lg:border-l lg:pl-6" : ""}`}
+              >
+                <dt className="order-2 mt-2 max-w-[22ch] text-xs leading-5 text-zinc-500 sm:text-sm">{s.label}</dt>
+                <dd className="font-sf-pro text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl lg:text-5xl">
                   {"text" in s ? s.text : <CountUp to={s.to} suffix={s.suffix} decimals={s.decimals} />}
-                </p>
-                <p className="mt-2 text-xs leading-5 text-zinc-500 sm:text-sm">{s.label}</p>
+                </dd>
               </div>
-            </Reveal>
-          ))}
-        </div>
+            ))}
+          </dl>
+        </Reveal>
 
         <Reveal>
-          <div className="mb-20 flex flex-wrap items-center justify-between gap-4 rounded-full border border-zinc-200 bg-white px-6 py-4 text-sm font-medium text-zinc-700 shadow-sm">
-            <div className="flex items-center gap-2 text-emerald-600">
-              <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-              <span>Open to remote frontend roles &amp; selected projects</span>
-            </div>
-            <div className="hidden items-center gap-2 text-zinc-400 md:flex">
-              <MapPin size={16} />
-              <span>Based in Sumedang, Indonesia · Remote-ready</span>
-            </div>
-            <div className="flex items-center gap-6">
-              <a href="https://wa.me/6285926270826" aria-label="WhatsApp" className="flex items-center gap-2 transition-colors hover:text-zinc-900">
-                <MessageCircle size={16} />
-                <span className="hidden sm:inline">WhatsApp</span>
-              </a>
-              <a href="mailto:mochsugihnugraha@gmail.com" aria-label="Email" className="flex items-center gap-2 transition-colors hover:text-zinc-900">
-                <Mail size={16} />
-                <span className="hidden sm:inline">Email</span>
-              </a>
-            </div>
-          </div>
+          <p className="mb-20 max-w-2xl text-sm leading-6 text-zinc-600">
+            Based in Sumedang, Indonesia, working remotely. Open to frontend roles and a few freelance projects. Reach me on{" "}
+            <a href="https://wa.me/6285926270826" className="font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-4 transition-colors hover:decoration-zinc-900">
+              WhatsApp
+            </a>{" "}
+            or{" "}
+            <a href="mailto:mochsugihnugraha@gmail.com" className="font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-4 transition-colors hover:decoration-zinc-900">
+              email
+            </a>
+            .
+          </p>
         </Reveal>
       </div>
     </>

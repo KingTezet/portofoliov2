@@ -133,23 +133,23 @@ export default function Projects() {
             <SplitText text="Measured results." />
           </h2>
         </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
-          {impactHighlights.map((h, i) => (
-            <Reveal key={h.label} delay={i * 0.08} className="h-full">
+        <ol className="border-b border-zinc-200">
+          {impactHighlights.map((h) => (
+            <li key={h.label} className="border-t border-zinc-200 first:border-zinc-900">
               <Link
                 href={`/projects/${h.slug}`}
-                className="group flex h-full flex-col rounded-3xl border border-zinc-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(24,24,27,0.06)]"
+                className="group grid grid-cols-1 gap-2 py-6 sm:grid-cols-12 sm:items-baseline sm:gap-6"
               >
-                <p className="font-sf-pro text-4xl font-semibold tracking-tight text-zinc-900">{h.value}</p>
-                <p className="mt-2 text-sm leading-6 text-zinc-600">{h.label}</p>
-                <span className="mt-auto flex items-center gap-1 pt-5 text-xs font-medium text-zinc-400 transition-colors group-hover:text-zinc-900">
+                <span className="font-sf-pro text-3xl font-semibold tracking-tight text-zinc-900 sm:col-span-3 md:text-4xl">{h.value}</span>
+                <span className="text-base leading-7 text-zinc-600 sm:col-span-6">{h.label}</span>
+                <span className="flex items-center gap-1 text-sm text-zinc-500 transition-colors group-hover:text-zinc-900 sm:col-span-3 sm:justify-end">
                   {h.project}
                   <ArrowUpRight size={14} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </span>
               </Link>
-            </Reveal>
+            </li>
           ))}
-        </div>
+        </ol>
       </section>
     </>
   );
