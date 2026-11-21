@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Parallax, Reveal, SplitText } from "@/components/motion";
@@ -25,11 +26,11 @@ export default function AboutPreview() {
           <div className="group relative mx-auto aspect-[3/4] w-full max-w-md overflow-hidden rounded-3xl bg-zinc-200 md:max-w-none">
             {/* Parallax: image is taller than frame and drifts on scroll */}
             <Parallax offset={40} className="absolute -inset-y-[8%] inset-x-0">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src="/profile-sugih.jpg"
                 alt="Moch Sugih Nugraha"
-                loading="lazy"
+                fill
+                sizes="(min-width: 768px) 40vw, 100vw"
                 className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
               />
             </Parallax>

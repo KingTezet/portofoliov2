@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, MapPin, Zap, RefreshCcw, Fingerprint, ScanFace, Lock, Sparkles, Award, GraduationCap, BookOpen } from "lucide-react";
@@ -250,10 +251,11 @@ export default function AboutPage() {
             <Reveal>
               <div className="group relative aspect-[3/4] overflow-hidden rounded-[2rem] bg-zinc-200">
                 <Parallax offset={36} className="absolute -inset-y-[8%] inset-x-0">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src="/profile-sugih.jpg"
                     alt="Moch Sugih Nugraha"
+                    fill
+                    sizes="(min-width: 1024px) 40vw, 100vw"
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </Parallax>

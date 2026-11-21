@@ -66,11 +66,11 @@ export function SplitText({
     // Observe the visible wrapper (words start clipped, so they can't be observed themselves).
     <motion.span
       className={className}
-      aria-label={text}
       initial="hidden"
       whileInView="show"
       viewport={{ once: true }}
     >
+      <span className="sr-only">{text}</span>
       {words.map((w, i) => (
         <span key={i} className="inline-block overflow-hidden pb-[0.08em] align-bottom" aria-hidden>
           <motion.span

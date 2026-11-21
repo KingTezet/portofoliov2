@@ -7,12 +7,15 @@ import { MotionProvider, ScrollProgress } from "@/components/motion";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  // Fallback after the system font stack; not needed for first paint.
+  preload: false,
 });
 
 const shantell = Shantell_Sans({
   variable: "--font-shantell",
   subsets: ["latin"],
   weight: ["300", "400"],
+  preload: false,
 });
 
 const bebas = Bebas_Neue({
@@ -29,8 +32,8 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "/favicon.png?v=4",
-        href: "/favicon.png?v=4",
+        url: "/favicon.png?v=5",
+        href: "/favicon.png?v=5",
       },
     ],
   },

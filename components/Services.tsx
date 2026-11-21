@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Reveal, SplitText, Tilt } from "@/components/motion";
 import { ArrowUpRight, Database, Layers, LayoutDashboard, Map } from "lucide-react";
@@ -45,8 +46,14 @@ function BrowserShot({ src, url, alt, className }: { src: string; url: string; a
         <span className="ml-3 truncate rounded-md bg-white/5 px-2 py-0.5 font-mono text-[10px] text-zinc-400">{url}</span>
       </div>
       <div className="relative aspect-[16/10]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt={alt} loading="lazy" className="absolute inset-0 h-full w-full object-cover object-top" />
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes="(min-width: 768px) 30vw, 90vw"
+          unoptimized={!src.startsWith("/")}
+          className="object-cover object-top"
+        />
       </div>
     </div>
   );
@@ -56,7 +63,7 @@ export default function Services() {
   return (
     <section id="focus" className="mx-auto mb-32 max-w-7xl scroll-mt-24 rounded-[2rem] bg-zinc-900 px-6 py-20 text-white sm:px-12 sm:py-24 lg:px-16">
       <div className="mb-14 flex flex-col md:items-end md:text-right">
-        <span className="mb-4 block font-mono text-xs uppercase tracking-wider text-zinc-500">(04) Areas of Focus</span>
+        <span className="mb-4 block font-mono text-xs uppercase tracking-wider text-zinc-400">(04) Areas of Focus</span>
         <h2 className="font-sf-pro text-5xl font-medium tracking-tight md:text-7xl">
           <SplitText text="What I Build." />
         </h2>
@@ -68,7 +75,7 @@ export default function Services() {
             <div className="grid grid-cols-1 lg:grid-cols-2">
               <div className="flex flex-col justify-between p-6 sm:p-10 lg:p-16">
                 <div>
-                  <span className="mb-3 block font-mono text-xs uppercase tracking-widest text-zinc-500 sm:mb-6">Featured</span>
+                  <span className="mb-3 block font-mono text-xs uppercase tracking-widest text-zinc-400 sm:mb-6">Featured</span>
                   <h3 className="font-sf-pro mb-4 text-3xl font-medium leading-[1.05] tracking-tight text-white sm:mb-6 sm:text-5xl lg:text-6xl">
                     From interface
                     <br />
@@ -126,7 +133,7 @@ export default function Services() {
                   <Icon size={22} />
                 </div>
                 <div>
-                  <span className="font-mono text-xs text-zinc-500">{n}</span>
+                  <span className="font-mono text-xs text-zinc-400">{n}</span>
                   <h3 className="mb-2 mt-0.5 text-lg font-semibold text-white">{title}</h3>
                   <p className="text-sm leading-relaxed text-zinc-400">{desc}</p>
                 </div>

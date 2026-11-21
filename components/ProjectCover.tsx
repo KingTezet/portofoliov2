@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { curatedProjects, mergeProjects, type DbProject, type ProjectEntry } from "@/lib/projects";
@@ -44,13 +45,15 @@ export default function ProjectCover({
 
   if (project.thumbnail_url && !broken) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
+      <Image
         src={project.thumbnail_url}
         alt={project.title}
-        loading="lazy"
+        fill
+        sizes="(min-width: 1024px) 50vw, 100vw"
+        // Supabase / external thumbnails are served as-is.
+        unoptimized={!project.thumbnail_url.startsWith("/")}
         onError={() => setBroken(true)}
-        className={`absolute inset-0 h-full w-full object-cover ${imgClassName}`}
+        className={`object-cover ${imgClassName}`}
       />
     );
   }

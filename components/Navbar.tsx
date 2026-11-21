@@ -23,7 +23,6 @@ export default function Navbar() {
         <div className="flex items-center justify-between gap-4">
           <Link
             href="/"
-            aria-label="Go to homepage"
             className="font-sf-pro shrink-0 text-[0.9375rem] font-semibold tracking-tight text-zinc-900"
           >
             Moch Sugih Nugraha

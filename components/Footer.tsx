@@ -135,7 +135,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="flex flex-col items-center justify-between gap-4 border-t border-zinc-800 pt-8 text-xs text-zinc-500 md:flex-row">
+          <div className="flex flex-col items-center justify-between gap-4 border-t border-zinc-800 pt-8 text-xs text-zinc-400 md:flex-row">
             <p>© {year} Moch Sugih Nugraha. All rights reserved.</p>
           </div>
         </div>

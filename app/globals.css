@@ -47,7 +47,8 @@ body {
 
 @keyframes heroFadeIn {
   from {
-    opacity: 0;
+    /* not 0: fully transparent elements are skipped as LCP candidates */
+    opacity: 0.01;
     transform: scale(1.04);
   }
   to {
@@ -67,13 +68,12 @@ body {
   }
 }
 
+/* Transform only: the hero heading is the mobile LCP element, so it must paint immediately. */
 @keyframes heroCopyIn {
   from {
-    opacity: 0;
     transform: translateY(24px);
   }
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }

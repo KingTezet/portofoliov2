@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight, Github, Instagram, Linkedin, Mail, MapPin, MessageCircle } from "lucide-react";
@@ -46,11 +47,13 @@ export default function Hero() {
           className="pointer-events-none absolute inset-0 z-10 will-change-transform"
         >
           <div className="animate-hero-fade-in flex h-full w-full justify-center [mask-image:linear-gradient(to_bottom,black_80%,transparent_100%)]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src="/profile-sugih.jpg"
               alt="Moch Sugih Nugraha"
-              fetchPriority="high"
+              width={3024}
+              height={4032}
+              priority
+              sizes="(min-width: 768px) 760px, 100vw"
               className="h-full w-full object-cover object-top md:w-auto md:max-w-[760px] md:[mask-image:linear-gradient(to_right,transparent_0%,black_18%,black_82%,transparent_100%)]"
             />
           </div>
@@ -178,11 +181,11 @@ export default function Hero() {
               <span>Based in Sumedang, Indonesia · Remote-ready</span>
             </div>
             <div className="flex items-center gap-6">
-              <a href="https://wa.me/6285926270826" className="flex items-center gap-2 transition-colors hover:text-zinc-900">
+              <a href="https://wa.me/6285926270826" aria-label="WhatsApp" className="flex items-center gap-2 transition-colors hover:text-zinc-900">
                 <MessageCircle size={16} />
                 <span className="hidden sm:inline">WhatsApp</span>
               </a>
-              <a href="mailto:mochsugihnugraha@gmail.com" className="flex items-center gap-2 transition-colors hover:text-zinc-900">
+              <a href="mailto:mochsugihnugraha@gmail.com" aria-label="Email" className="flex items-center gap-2 transition-colors hover:text-zinc-900">
                 <Mail size={16} />
                 <span className="hidden sm:inline">Email</span>
               </a>
