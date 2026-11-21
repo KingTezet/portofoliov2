@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight, Github, Instagram, Linkedin, Mail, MapPin, MessageCircle } from "lucide-react";
 import { CountUp, Reveal, SplitText } from "@/components/motion";
+import { curatedProjects } from "@/lib/projects";
 
 const CV = "/CV_Moch_Sugih_Nugraha_Frontend_Engineer.pdf";
 const GRADIENT = "bg-gradient-to-b from-zinc-900 to-zinc-400 bg-clip-text text-transparent";
@@ -22,8 +23,8 @@ type Stat = { label: string } & ({ to: number; suffix?: string; decimals?: numbe
 const stats: Stat[] = [
   { to: 5, suffix: "+", label: "Years building for the web" },
   { to: 3.9, suffix: "/4.00", decimals: 2, label: "GPA, Informatics (expected 2027)" },
-  { text: "1st & 2nd", label: "University Innovation Challenge, 2024 & 2025" },
-  { to: 8, label: "Google Cloud skill badges" },
+  { to: curatedProjects.length, label: "Projects shipped, from GovTech to F&B" },
+  { to: 100, suffix: "+", label: "SME members served by one portal" },
 ];
 
 export default function Hero() {
