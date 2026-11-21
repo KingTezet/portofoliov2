@@ -24,7 +24,7 @@ const stats: Stat[] = [
   { to: 5, suffix: "+", label: "Years building for the web" },
   { to: 3.9, suffix: "/4.00", decimals: 2, label: "GPA, Informatics (expected 2027)" },
   { to: curatedProjects.length, label: "Projects shipped, from GovTech to F&B" },
-  { to: 70, suffix: "%", label: "Of customer-service inquiries automated with n8n" },
+  { to: curatedProjects.filter((p) => p.demo_url).length, label: "Live products you can open and try" },
 ];
 
 export default function Hero() {
