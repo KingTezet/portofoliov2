@@ -3,27 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Reveal, SplitText } from "@/components/motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Github, Instagram, Linkedin, Mail, MapPin, MessageCircle } from "lucide-react";
 
 const EMAIL = "mochsugihnugraha@gmail.com";
 const WA = "https://wa.me/6285926270826";
 
-const CV = "/CV_Moch_Sugih_Nugraha_Frontend_Engineer.pdf";
-
-const siteLinks = [
-  { label: "Work", href: "/#work" },
-  { label: "Experience", href: "/#experience" },
-  { label: "All projects", href: "/projects" },
-  { label: "About", href: "/about" },
-];
-
 const socials = [
-  { label: "GitHub", href: "https://github.com/KingTezet" },
-  {
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/in/moch-sugih-nugraha/",
-  },
-  { label: "Instagram", href: "https://instagram.com/sugihnugrahaa" },
+  { label: "GitHub", href: "https://github.com/KingTezet", icon: Github },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/moch-sugih-nugraha/", icon: Linkedin },
+  { label: "Instagram", href: "https://instagram.com/sugihnugrahaa", icon: Instagram },
 ];
 
 export default function Footer() {
@@ -32,82 +20,126 @@ export default function Footer() {
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <footer className="bg-[#fcfbfa]">
-      <section
-        id="contact"
-        className="mx-auto max-w-7xl scroll-mt-24 px-4 pb-24 pt-8 sm:px-6 lg:px-8"
-      >
-        <div className="border-t border-zinc-900 pt-10">
-          <span className="mb-2 block font-mono text-xs uppercase tracking-wider text-zinc-500">
-            (06) Contact
-          </span>
-          <h2 className="font-sf-pro max-w-3xl text-4xl font-medium tracking-tight text-zinc-900 md:text-6xl">
-            <SplitText text="Tell me what you're building." />
-          </h2>
-          <Reveal delay={0.1}>
-            <p className="mt-6 max-w-xl text-base leading-7 text-zinc-600">
-              Open to remote frontend roles and contract work. Email is the best
-              way to reach me; WhatsApp works too.
-            </p>
-          </Reveal>
-          <Reveal delay={0.15}>
-            <a
-              href={`mailto:${EMAIL}`}
-              className="group mt-8 inline-flex items-center gap-2 break-all text-2xl font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-8 transition-colors hover:decoration-zinc-900 sm:text-4xl"
-            >
-              {EMAIL}
-              <ArrowUpRight className="shrink-0 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" />
-            </a>
-            <p className="mt-6 text-sm text-zinc-600">
-              <a
-                href={WA}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-4 hover:decoration-zinc-900"
-              >
-                WhatsApp
-              </a>
-              <span className="mx-2 text-zinc-300">/</span>
-              <a
-                href={CV}
-                target="_blank"
-                download
-                className="font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-4 hover:decoration-zinc-900"
-              >
-                Download CV
-              </a>
-            </p>
-          </Reveal>
-        </div>
+    <>
+      <section id="contact" className="flex min-h-[80vh] scroll-mt-24 flex-col items-center justify-center bg-[#fcfbfa] px-4 text-center">
+        <h2 className="font-sf-pro mb-10 pb-2 text-5xl font-semibold leading-none tracking-tighter text-zinc-900 sm:text-6xl md:text-7xl lg:text-8xl">
+          <SplitText text="Have a product" />
+          <br />
+          <SplitText text="or workflow" delay={0.12} />{" "}
+          <SplitText text="to improve?" delay={0.2} wordClassName="bg-gradient-to-b from-zinc-900 to-zinc-400 bg-clip-text pr-2 text-transparent" />
+        </h2>
+        <Reveal delay={0.2}>
+        <p className="mb-8 max-w-2xl text-base leading-7 text-zinc-600 sm:text-lg sm:leading-8">
+          I&apos;m open to remote frontend roles, contract opportunities, and product-focused collaborations. Tell
+          me what you&apos;re building, and let&apos;s start a conversation.
+        </p>
+        </Reveal>
+        <Reveal delay={0.3} className="flex flex-col items-center">
+        <a
+          href={`mailto:${EMAIL}`}
+          className="inline-flex items-center gap-3 rounded-full bg-zinc-900 px-7 py-4 text-base font-medium text-white transition-all duration-300 hover:scale-[1.03] hover:bg-zinc-800 hover:shadow-[0_14px_40px_rgba(24,24,27,0.25)]"
+        >
+          <Mail size={18} />
+          Email Me
+          <ArrowUpRight size={18} />
+        </a>
+        <a
+          href={WA}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-flex items-center gap-2 rounded-full border border-zinc-300 px-6 py-3 text-sm font-medium text-zinc-700 transition-colors hover:border-zinc-400 hover:text-zinc-900"
+        >
+          <MessageCircle size={16} />
+          Chat on WhatsApp
+        </a>
+        </Reveal>
       </section>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-4 border-t border-zinc-200 py-8 text-sm text-zinc-500 md:flex-row md:items-center md:justify-between">
-          <p>© {year} Moch Sugih Nugraha · Sumedang, Indonesia</p>
-          <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-2">
-            {siteLinks.map((l) => (
-              <Link
-                key={l.label}
-                href={l.href}
-                className="transition-colors hover:text-zinc-900"
-              >
-                {l.label}
-              </Link>
-            ))}
-            {socials.map((l) => (
-              <a
-                key={l.label}
-                href={l.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-colors hover:text-zinc-900"
-              >
-                {l.label}
-              </a>
-            ))}
-          </nav>
+      <footer className="bg-zinc-900 text-white">
+        <div className="mx-auto max-w-7xl px-8 pb-10 pt-16 sm:px-12 lg:px-16">
+          <div className="mb-16 grid grid-cols-1 gap-16 lg:grid-cols-12">
+            <div className="flex flex-col items-start lg:col-span-5">
+              <h3 className="mb-4 text-4xl font-medium">Moch Sugih Nugraha</h3>
+              <p className="mb-8 max-w-sm text-sm text-zinc-400">
+                Frontend Engineer building practical web products with React, Next.js, and TypeScript.
+              </p>
+              <div className="mb-8 w-full space-y-4 text-sm text-zinc-300">
+                <div className="flex items-center gap-4">
+                  <MapPin size={18} />
+                  <span>Based in Sumedang, Indonesia · Remote-ready</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Mail size={18} />
+                  <a href={`mailto:${EMAIL}`} className="transition-colors hover:text-white">
+                    {EMAIL}
+                  </a>
+                </div>
+              </div>
+              <div className="mb-8">
+                <p className="mb-4 text-sm font-medium text-zinc-400">Follow me</p>
+                <div className="flex gap-5">
+                  {socials.map(({ label, href, icon: Icon }) => (
+                    <a
+                      key={label}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      className="text-zinc-400 transition-colors hover:text-white"
+                    >
+                      <Icon size={22} />
+                    </a>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href={`mailto:${EMAIL}`}
+                  className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-zinc-900 transition-all hover:bg-zinc-100"
+                >
+                  Let&apos;s Work Together <ArrowUpRight size={16} />
+                </a>
+                <a
+                  href="/CV_Moch_Sugih_Nugraha_Frontend_Engineer.pdf"
+                  target="_blank"
+                  download
+                  className="inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-medium text-white transition-all hover:border-white/40 hover:bg-white/5"
+                >
+                  Download CV
+                </a>
+              </div>
+            </div>
+
+            <div className="hidden lg:col-span-1 lg:block" />
+
+            <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:col-span-6">
+              <div>
+                <h4 className="mb-8 text-lg font-medium">Areas of Focus</h4>
+                <ul className="space-y-4 text-sm text-zinc-400">
+                  <li>Web Apps &amp; Dashboards</li>
+                  <li>Interface Engineering</li>
+                  <li>API &amp; Data Integration</li>
+                  <li>Map-based Data Tools</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="mb-8 text-lg font-medium">Quick Links</h4>
+                <ul className="space-y-4 text-sm text-zinc-400">
+                  <li><Link href="/#work" className="transition-colors hover:text-white">Selected Work</Link></li>
+                  <li><Link href="/#experience" className="transition-colors hover:text-white">Experience</Link></li>
+                  <li><Link href="/projects" className="transition-colors hover:text-white">All Projects</Link></li>
+                  <li><Link href="/about" className="transition-colors hover:text-white">About</Link></li>
+                  <li><a href="#contact" className="transition-colors hover:text-white">Contact</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center justify-between gap-4 border-t border-zinc-800 pt-8 text-xs text-zinc-400 md:flex-row">
+            <p>© {year} Moch Sugih Nugraha. All rights reserved.</p>
+          </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+    </>
   );
 }
