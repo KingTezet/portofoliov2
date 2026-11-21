@@ -51,6 +51,7 @@ export function Modal({ open, onClose, title, children, wide }: { open: boolean;
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.96, opacity: 0, y: 16 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            data-lenis-prevent
             className={`relative z-10 max-h-[90vh] w-full overflow-y-auto rounded-[2rem] border border-zinc-200 bg-white p-6 shadow-2xl sm:p-8 ${wide ? "max-w-2xl" : "max-w-lg"}`}
           >
             <div className="mb-6 flex items-center justify-between">

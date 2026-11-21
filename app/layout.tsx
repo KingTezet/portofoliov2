@@ -3,6 +3,7 @@ import { Inter, Shantell_Sans, Bebas_Neue } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import { MotionProvider, ScrollProgress } from "@/components/motion";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -115,7 +116,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en">
       <body
         className={`${inter.variable} ${shantell.variable} ${bebas.variable} font-sans bg-[#f5f5f4] text-zinc-900 antialiased`}
       >
@@ -124,11 +125,13 @@ export default function RootLayout({
           // Structured data so Google can tie the name, photo and profiles together.
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
-        <MotionProvider>
-          <ScrollProgress />
-          {children}
-          <Footer />
-        </MotionProvider>
+        <SmoothScroll>
+          <MotionProvider>
+            <ScrollProgress />
+            {children}
+            <Footer />
+          </MotionProvider>
+        </SmoothScroll>
       </body>
     </html>
   );

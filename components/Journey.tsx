@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { motion, useScroll } from "framer-motion";
 import { Reveal, SplitText } from "@/components/motion";
 
 type ExperienceItem = {
@@ -78,7 +78,8 @@ const experience: ExperienceItem[] = [
 export default function Journey() {
   const listRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: listRef, offset: ["start 75%", "end 60%"] });
-  const lineScale = useSpring(scrollYProgress, { stiffness: 100, damping: 25, mass: 0.3 });
+  // Lenis already smooths scrolling; a spring here would lag behind it.
+  const lineScale = scrollYProgress;
 
   return (
     <section id="experience" className="mb-32 scroll-mt-24">

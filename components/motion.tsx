@@ -90,10 +90,9 @@ export function SplitText({
 /** Thin progress bar at the very top of the page. */
 export function ScrollProgress() {
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.3 });
   return (
     <motion.div
-      style={{ scaleX }}
+      style={{ scaleX: scrollYProgress }}
       className="fixed inset-x-0 top-0 z-[200] h-[3px] origin-left bg-zinc-900"
     />
   );
