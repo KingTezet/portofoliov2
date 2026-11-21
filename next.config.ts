@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         has: [{ type: "host", value: "moch-sugih-nugraha-v2.vercel.app" }],
-        destination: "https://mochsugihnugraha.my.id/:path*",
+        destination: "https://www.mochsugihnugraha.my.id/:path*",
         permanent: true,
       },
     ];
