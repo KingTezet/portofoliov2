@@ -22,6 +22,7 @@ const bebas = Bebas_Neue({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://mochsugihnugraha.my.id"),
   title: "Moch Sugih Nugraha | Frontend Engineer",
   description:
     "Frontend Engineer building fast, accessible web interfaces with React, Next.js, TypeScript and Tailwind CSS.",
