@@ -316,8 +316,8 @@ export const curatedProjects: ProjectEntry[] = [
       "An immersive editorial redesign of a crypto news and research site, with a Three.js wave hero, GSAP scroll motion, and the live site's routes and content.",
     tags: ["Vite", "JavaScript", "Three.js", "GSAP", "Playwright"],
     thumbnail_url: "/images/projects/cryptowave.webp",
+    demo_url: "https://cryptowave-redesign.vercel.app",
     supporting: true,
-    private: true,
     caseStudy: {
       overview:
         "A standalone frontend redesign for CryptoWave that mirrors the live routes and data contracts so it can be ported into the production Rails views.",
@@ -342,8 +342,8 @@ export const curatedProjects: ProjectEntry[] = [
       "A creative-technology portfolio with a scroll-driven WebGL stage: a halftone 3D portrait relief that dissolves into a procedural phone.",
     tags: ["Next.js 16", "TypeScript", "Tailwind CSS v4", "Three.js", "React Three Fiber", "GSAP"],
     thumbnail_url: "/images/projects/nata-space.webp",
+    demo_url: "https://nata-space.vercel.app",
     supporting: true,
-    private: true,
     caseStudy: {
       overview: "An independent digital portfolio and creative-technology showcase.",
       role: "Designed and built the product.",
