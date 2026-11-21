@@ -63,6 +63,10 @@ const experience: ExperienceItem[] = [
     role: "Universitas Sebelas April (UNSAP)",
     org: "B.S. in Informatics · Expected 2027 · GPA 3.90/4.00",
     period: "2023 — 2027 (expected)",
+    points: [
+      "1st Place (2024) and 2nd Place (2025), University Innovation Challenge.",
+      "Earned 8 Google Cloud skill badges.",
+    ],
   },
   {
     role: "SMKN 1 Sumedang",
